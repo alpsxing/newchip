@@ -1,0 +1,18 @@
+     u-boot is the third stage loader,
+ 
+   - 1st stage is ROM Boot Loader, which searches for a
+     second stage loader in SPI FLASH. 
+
+   - 2nd stage using at most 16KB of on-chip SRAM, 
+     responsible for lowlevel init, and for
+     loading the third stage loader into DRAM.
+
+   - 3rd stage, that's us!
+
+
+build:
+
+export CROSS_COMPILE=arm-none-linux-gnueabi-
+export PATH=/opt/arm-2012.09/bin:$PATH
+make newchip_config
+make
