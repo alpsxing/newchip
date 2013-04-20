@@ -1,0 +1,409 @@
+arm-none-linux-gnueabi-gcc -DDO_DEPS_ONLY \
+		-g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage   \
+		-o lib/asm-offsets.s lib/asm-offsets.c -c -S
+Generating include/generated/generic-asm-offsets.h
+tools/scripts/make-asm-offsets lib/asm-offsets.s include/generated/generic-asm-offsets.h
+if [ -f arch/arm/cpu/arm926ejs/newchip/asm-offsets.c ];then \
+		arm-none-linux-gnueabi-gcc -DDO_DEPS_ONLY \
+		-g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage   \
+			-o arch/arm/cpu/arm926ejs/newchip/asm-offsets.s arch/arm/cpu/arm926ejs/newchip/asm-offsets.c -c -S; \
+	else \
+		touch arch/arm/cpu/arm926ejs/newchip/asm-offsets.s; \
+	fi
+Generating include/generated/asm-offsets.h
+tools/scripts/make-asm-offsets arch/arm/cpu/arm926ejs/newchip/asm-offsets.s include/generated/asm-offsets.h
+for dir in tools examples/standalone examples/api arch/arm/cpu/arm926ejs  ; do \
+			make -C $dir _depend ; done
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/tools'
+make[1]: Nothing to be done for `_depend'.
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/tools'
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/examples/standalone'
+make[1]: Nothing to be done for `_depend'.
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/examples/standalone'
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/examples/api'
+make[1]: Nothing to be done for `_depend'.
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/examples/api'
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/arch/arm/cpu/arm926ejs'
+make[1]: Nothing to be done for `_depend'.
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/arch/arm/cpu/arm926ejs'
+make -C tools all
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/tools'
+gcc -g -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES -pedantic -c -o crc32.o /root/newchip/u-boot-2013.01/lib/crc32.c
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES   -o mkenvimage.o mkenvimage.c -c
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES   -o os_support.o os_support.c -c
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES -pedantic  -o mkenvimage crc32.o mkenvimage.o os_support.o
+strip mkenvimage
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES   -o aisimage.o aisimage.c -c
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES   -o default_image.o default_image.c -c
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES   -o fit_image.o fit_image.c -c
+gcc -g -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES -c -o image.o /root/newchip/u-boot-2013.01/common/image.c
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES   -o imximage.o imximage.c -c
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES   -o kwbimage.o kwbimage.c -c
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES   -o pblimage.o pblimage.c -c
+gcc -g -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES -pedantic -c -o md5.o /root/newchip/u-boot-2013.01/lib/md5.c
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES   -o mkimage.o mkimage.c -c
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES   -o omapimage.o omapimage.c -c
+gcc -g -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES -pedantic -c -o sha1.o /root/newchip/u-boot-2013.01/lib/sha1.c
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES   -o ublimage.o ublimage.c -c
+gcc -g -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES -c -o fdt.o /root/newchip/u-boot-2013.01/lib/libfdt/fdt.c
+gcc -g -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES -c -o fdt_ro.o /root/newchip/u-boot-2013.01/lib/libfdt/fdt_ro.c
+gcc -g -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES -c -o fdt_rw.o /root/newchip/u-boot-2013.01/lib/libfdt/fdt_rw.c
+gcc -g -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES -c -o fdt_strerror.o /root/newchip/u-boot-2013.01/lib/libfdt/fdt_strerror.c
+gcc -g -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES -c -o fdt_wip.o /root/newchip/u-boot-2013.01/lib/libfdt/fdt_wip.c
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -idirafter /root/newchip/u-boot-2013.01/include -idirafter /root/newchip/u-boot-2013.01/include2 -idirafter /root/newchip/u-boot-2013.01/include -I /root/newchip/u-boot-2013.01/lib/libfdt -I /root/newchip/u-boot-2013.01/tools -DCONFIG_SYS_TEXT_BASE=0x1020000 -DUSE_HOSTCC -D__KERNEL_STRICT_NAMES -pedantic  -o mkimage aisimage.o crc32.o default_image.o fit_image.o image.o imximage.o kwbimage.o pblimage.o md5.o mkimage.o os_support.o omapimage.o sha1.o ublimage.o fdt.o fdt_ro.o fdt_rw.o fdt_strerror.o fdt_wip.o
+strip mkimage
+make[2]: Entering directory `/root/newchip/u-boot-2013.01/tools/kernel-doc'
+gcc -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer  -pedantic  -o docproc docproc.c
+strip docproc
+make[2]: Leaving directory `/root/newchip/u-boot-2013.01/tools/kernel-doc'
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/tools'
+make -C arch/arm/cpu/arm926ejs start.o
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/arch/arm/cpu/arm926ejs'
+arm-none-linux-gnueabi-gcc   -D__ASSEMBLY__ -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te   -o start.o start.S -c
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/arch/arm/cpu/arm926ejs'
+make -C api/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/api'
+rm -f libapi.o; arm-none-linux-gnueabi-ar rcs libapi.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/api'
+make -C arch/arm/cpu/arm926ejs/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/arch/arm/cpu/arm926ejs'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o cpu.o cpu.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o cache.o cache.c -c
+arm-none-linux-gnueabi-ld  -r -o libarm926ejs.o  cpu.o cache.o
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/arch/arm/cpu/arm926ejs'
+make -C arch/arm/cpu/arm926ejs/newchip/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/arch/arm/cpu/arm926ejs/newchip'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o reset.o reset.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o timer.o timer.c -c
+arm-none-linux-gnueabi-ld  -r -o libnewchip.o  reset.o timer.o
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/arch/arm/cpu/arm926ejs/newchip'
+make -C arch/arm/lib/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/arch/arm/lib'
+arm-none-linux-gnueabi-gcc   -D__ASSEMBLY__ -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te   -o crt0.o crt0.S -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o board.o board.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o bootm.o bootm.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o interrupts.o interrupts.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o reset.o reset.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o cache.o cache.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o cache-cp15.o cache-cp15.c -c
+arm-none-linux-gnueabi-ld  -r -o libarm.o  crt0.o board.o bootm.o interrupts.o reset.o cache.o cache-cp15.o
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o eabi_compat.o eabi_compat.c -c
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/arch/arm/lib'
+make -C common/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/common'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o cmd_boot.o cmd_boot.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o cmd_bootm.o cmd_bootm.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o cmd_disk.o cmd_disk.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o cmd_help.o cmd_help.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o cmd_load.o cmd_load.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o cmd_nvedit.o cmd_nvedit.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o cmd_pcmcia.o cmd_pcmcia.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o cmd_version.o cmd_version.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o command.o command.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o console.o console.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o dlmalloc.o dlmalloc.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o env_attr.o env_attr.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o env_callback.o env_callback.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o env_common.o env_common.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o env_flags.o env_flags.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o env_nowhere.o env_nowhere.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o exports.o exports.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o flash.o flash.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o hash.o hash.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o image.o image.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o main.o main.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o memsize.o memsize.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o s_record.o s_record.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o stdio.o stdio.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o xyzModem.o xyzModem.c -c
+arm-none-linux-gnueabi-ld  -r -o libcommon.o  cmd_boot.o cmd_bootm.o cmd_disk.o cmd_help.o cmd_load.o cmd_nvedit.o cmd_pcmcia.o cmd_version.o command.o console.o dlmalloc.o env_attr.o env_callback.o env_common.o env_flags.o env_nowhere.o exports.o flash.o hash.o image.o main.o memsize.o s_record.o stdio.o xyzModem.o
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/common'
+make -C disk/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/disk'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o part.o part.c -c
+arm-none-linux-gnueabi-ld  -r -o libdisk.o  part.o
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/disk'
+make -C drivers/bios_emulator/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/bios_emulator'
+rm -f libatibiosemu.o; arm-none-linux-gnueabi-ar rcs libatibiosemu.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/bios_emulator'
+make -C drivers/block/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/block'
+rm -f libblock.o; arm-none-linux-gnueabi-ar rcs libblock.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/block'
+make -C drivers/dfu/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/dfu'
+rm -f libdfu.o; arm-none-linux-gnueabi-ar rcs libdfu.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/dfu'
+make -C drivers/dma/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/dma'
+rm -f libdma.o; arm-none-linux-gnueabi-ar rcs libdma.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/dma'
+make -C drivers/fpga/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/fpga'
+rm -f libfpga.o; arm-none-linux-gnueabi-ar rcs libfpga.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/fpga'
+make -C drivers/gpio/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/gpio'
+rm -f libgpio.o; arm-none-linux-gnueabi-ar rcs libgpio.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/gpio'
+make -C drivers/hwmon/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/hwmon'
+rm -f libhwmon.o; arm-none-linux-gnueabi-ar rcs libhwmon.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/hwmon'
+make -C drivers/i2c/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/i2c'
+rm -f libi2c.o; arm-none-linux-gnueabi-ar rcs libi2c.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/i2c'
+make -C drivers/input/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/input'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o input.o input.c -c
+arm-none-linux-gnueabi-ld  -r -o libinput.o  input.o
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/input'
+make -C drivers/misc/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/misc'
+rm -f libmisc.o; arm-none-linux-gnueabi-ar rcs libmisc.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/misc'
+make -C drivers/mmc/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/mmc'
+rm -f libmmc.o; arm-none-linux-gnueabi-ar rcs libmmc.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/mmc'
+make -C drivers/mtd/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/mtd'
+rm -f libmtd.o; arm-none-linux-gnueabi-ar rcs libmtd.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/mtd'
+make -C drivers/mtd/nand/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/mtd/nand'
+rm -f libnand.o; arm-none-linux-gnueabi-ar rcs libnand.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/mtd/nand'
+make -C drivers/mtd/onenand/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/mtd/onenand'
+rm -f libonenand.o; arm-none-linux-gnueabi-ar rcs libonenand.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/mtd/onenand'
+make -C drivers/mtd/spi/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/mtd/spi'
+rm -f libspi_flash.o; arm-none-linux-gnueabi-ar rcs libspi_flash.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/mtd/spi'
+make -C drivers/mtd/ubi/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/mtd/ubi'
+rm -f libubi.o; arm-none-linux-gnueabi-ar rcs libubi.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/mtd/ubi'
+make -C drivers/net/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/net'
+rm -f libnet.o; arm-none-linux-gnueabi-ar rcs libnet.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/net'
+make -C drivers/net/phy/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/net/phy'
+rm -f libphy.o; arm-none-linux-gnueabi-ar rcs libphy.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/net/phy'
+make -C drivers/pci/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/pci'
+rm -f libpci.o; arm-none-linux-gnueabi-ar rcs libpci.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/pci'
+make -C drivers/pcmcia/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/pcmcia'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o rpx_pcmcia.o rpx_pcmcia.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o tqm8xx_pcmcia.o tqm8xx_pcmcia.c -c
+arm-none-linux-gnueabi-ld  -r -o libpcmcia.o  rpx_pcmcia.o tqm8xx_pcmcia.o
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/pcmcia'
+make -C drivers/power/battery/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/power/battery'
+rm -f libbattery.o; arm-none-linux-gnueabi-ar rcs libbattery.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/power/battery'
+make -C drivers/power/fuel_gauge/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/power/fuel_gauge'
+rm -f libfuel_gauge.o; arm-none-linux-gnueabi-ar rcs libfuel_gauge.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/power/fuel_gauge'
+make -C drivers/power/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/power'
+rm -f libpower.o; arm-none-linux-gnueabi-ar rcs libpower.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/power'
+make -C drivers/power/pmic/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/power/pmic'
+rm -f libpmic.o; arm-none-linux-gnueabi-ar rcs libpmic.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/power/pmic'
+make -C drivers/rtc/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/rtc'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o date.o date.c -c
+arm-none-linux-gnueabi-ld  -r -o librtc.o  date.o
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/rtc'
+make -C drivers/serial/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/serial'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o ns16550.o ns16550.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o serial.o serial.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o serial_ns16550.o serial_ns16550.c -c
+arm-none-linux-gnueabi-ld  -r -o libserial.o  ns16550.o serial.o serial_ns16550.o
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/serial'
+make -C drivers/sound/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/sound'
+rm -f libsound.o; arm-none-linux-gnueabi-ar rcs libsound.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/sound'
+make -C drivers/spi/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/spi'
+rm -f libspi.o; arm-none-linux-gnueabi-ar rcs libspi.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/spi'
+make -C drivers/twserial/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/twserial'
+rm -f libtws.o; arm-none-linux-gnueabi-ar rcs libtws.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/twserial'
+make -C drivers/usb/eth/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/usb/eth'
+rm -f libusb_eth.o; arm-none-linux-gnueabi-ar rcs libusb_eth.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/usb/eth'
+make -C drivers/usb/gadget/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/usb/gadget'
+rm -f libusb_gadget.o; arm-none-linux-gnueabi-ar rcs libusb_gadget.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/usb/gadget'
+make -C drivers/usb/host/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/usb/host'
+rm -f libusb_host.o; arm-none-linux-gnueabi-ar rcs libusb_host.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/usb/host'
+make -C drivers/usb/musb-new/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/usb/musb-new'
+rm -f libusb_musb-new.o; arm-none-linux-gnueabi-ar rcs libusb_musb-new.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/usb/musb-new'
+make -C drivers/usb/musb/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/usb/musb'
+rm -f libusb_musb.o; arm-none-linux-gnueabi-ar rcs libusb_musb.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/usb/musb'
+make -C drivers/usb/phy/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/usb/phy'
+rm -f libusb_phy.o; arm-none-linux-gnueabi-ar rcs libusb_phy.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/usb/phy'
+make -C drivers/usb/ulpi/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/usb/ulpi'
+rm -f libusb_ulpi.o; arm-none-linux-gnueabi-ar rcs libusb_ulpi.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/usb/ulpi'
+make -C drivers/video/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/video'
+rm -f libvideo.o; arm-none-linux-gnueabi-ar rcs libvideo.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/video'
+make -C drivers/watchdog/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/drivers/watchdog'
+rm -f libwatchdog.o; arm-none-linux-gnueabi-ar rcs libwatchdog.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/drivers/watchdog'
+make -C fs/cbfs/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/fs/cbfs'
+rm -f libcbfs.o; arm-none-linux-gnueabi-ar rcs libcbfs.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/fs/cbfs'
+make -C fs/cramfs/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/fs/cramfs'
+rm -f libcramfs.o; arm-none-linux-gnueabi-ar rcs libcramfs.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/fs/cramfs'
+make -C fs/ext4/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/fs/ext4'
+rm -f libext4fs.o; arm-none-linux-gnueabi-ar rcs libext4fs.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/fs/ext4'
+make -C fs/fat/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/fs/fat'
+rm -f libfat.o; arm-none-linux-gnueabi-ar rcs libfat.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/fs/fat'
+make -C fs/fdos/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/fs/fdos'
+rm -f libfdos.o; arm-none-linux-gnueabi-ar rcs libfdos.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/fs/fdos'
+make -C fs/jffs2/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/fs/jffs2'
+rm -f libjffs2.o; arm-none-linux-gnueabi-ar rcs libjffs2.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/fs/jffs2'
+make -C fs/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/fs'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o fs.o fs.c -c
+arm-none-linux-gnueabi-ld  -r -o libfs.o  fs.o
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/fs'
+make -C fs/reiserfs/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/fs/reiserfs'
+rm -f libreiserfs.o; arm-none-linux-gnueabi-ar rcs libreiserfs.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/fs/reiserfs'
+make -C fs/ubifs/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/fs/ubifs'
+rm -f libubifs.o; arm-none-linux-gnueabi-ar rcs libubifs.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/fs/ubifs'
+make -C fs/yaffs2/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/fs/yaffs2'
+rm -f libyaffs2.o; arm-none-linux-gnueabi-ar rcs libyaffs2.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/fs/yaffs2'
+make -C fs/zfs/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/fs/zfs'
+rm -f libzfs.o; arm-none-linux-gnueabi-ar rcs libzfs.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/fs/zfs'
+make -C lib/libfdt/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/lib/libfdt'
+rm -f libfdt.o; arm-none-linux-gnueabi-ar rcs libfdt.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/lib/libfdt'
+make -C lib/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/lib'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o crc16.o crc16.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o crc32.o crc32.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o crc7.o crc7.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o ctype.o ctype.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o display_options.o display_options.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o div64.o div64.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o errno.o errno.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o gunzip.o gunzip.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o hashtable.o hashtable.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o ldiv.o ldiv.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o linux_string.o linux_string.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o lmb.o lmb.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o net_utils.o net_utils.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o qsort.o qsort.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o string.o string.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o strmhz.o strmhz.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o time.o time.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o vsprintf.o vsprintf.c -c
+arm-none-linux-gnueabi-ld  -r -o libgeneric.o  crc16.o crc32.o crc7.o ctype.o display_options.o div64.o errno.o gunzip.o hashtable.o ldiv.o linux_string.o lmb.o net_utils.o qsort.o string.o strmhz.o time.o vsprintf.o
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/lib'
+make -C lib/lzma/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/lib/lzma'
+rm -f liblzma.o; arm-none-linux-gnueabi-ar rcs liblzma.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/lib/lzma'
+make -C lib/lzo/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/lib/lzo'
+rm -f liblzo.o; arm-none-linux-gnueabi-ar rcs liblzo.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/lib/lzo'
+make -C lib/zlib/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/lib/zlib'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o zlib.o zlib.c -c
+arm-none-linux-gnueabi-ld  -r -o libz.o  zlib.o
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/lib/zlib'
+make -C net/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/net'
+rm -f libnet.o; arm-none-linux-gnueabi-ar rcs libnet.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/net'
+make -C post/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/post'
+rm -f libpost.o; arm-none-linux-gnueabi-ar rcs libpost.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/post'
+make -C test/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/test'
+rm -f libtest.o; arm-none-linux-gnueabi-ar rcs libtest.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/test'
+make -C board/xxx/newchip/
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/board/xxx/newchip'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage     -o newchip.o newchip.c -c
+arm-none-linux-gnueabi-ld  -r -o libnewchip.o  newchip.o 
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/board/xxx/newchip'
+make -C /root/newchip/u-boot-2013.01/arch/arm/cpu/ u-boot.lds
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/arch/arm/cpu'
+make[1]: Nothing to be done for `u-boot.lds'.
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/arch/arm/cpu'
+arm-none-linux-gnueabi-objdump -h  board/xxx/newchip/libnewchip.o api/libapi.o arch/arm/cpu/arm926ejs/libarm926ejs.o arch/arm/cpu/arm926ejs/newchip/libnewchip.o arch/arm/lib/libarm.o common/libcommon.o disk/libdisk.o drivers/bios_emulator/libatibiosemu.o drivers/block/libblock.o drivers/dfu/libdfu.o drivers/dma/libdma.o drivers/fpga/libfpga.o drivers/gpio/libgpio.o drivers/hwmon/libhwmon.o drivers/i2c/libi2c.o drivers/input/libinput.o drivers/misc/libmisc.o drivers/mmc/libmmc.o drivers/mtd/libmtd.o drivers/mtd/nand/libnand.o drivers/mtd/onenand/libonenand.o drivers/mtd/spi/libspi_flash.o drivers/mtd/ubi/libubi.o drivers/net/libnet.o drivers/net/phy/libphy.o drivers/pci/libpci.o drivers/pcmcia/libpcmcia.o drivers/power/battery/libbattery.o drivers/power/fuel_gauge/libfuel_gauge.o drivers/power/libpower.o drivers/power/pmic/libpmic.o drivers/rtc/librtc.o drivers/serial/libserial.o drivers/sound/libsound.o drivers/spi/libspi.o drivers/twserial/libtws.o drivers/usb/eth/libusb_eth.o drivers/usb/gadget/libusb_gadget.o drivers/usb/host/libusb_host.o drivers/usb/musb-new/libusb_musb-new.o drivers/usb/musb/libusb_musb.o drivers/usb/phy/libusb_phy.o drivers/usb/ulpi/libusb_ulpi.o drivers/video/libvideo.o drivers/watchdog/libwatchdog.o fs/cbfs/libcbfs.o fs/cramfs/libcramfs.o fs/ext4/libext4fs.o fs/fat/libfat.o fs/fdos/libfdos.o fs/jffs2/libjffs2.o fs/libfs.o fs/reiserfs/libreiserfs.o fs/ubifs/libubifs.o fs/yaffs2/libyaffs2.o fs/zfs/libzfs.o lib/libfdt/libfdt.o lib/libgeneric.o lib/lzma/liblzma.o lib/lzo/liblzo.o lib/zlib/libz.o net/libnet.o post/libpost.o test/libtest.o | sed -n -e '/.*\.u_boot_list[^ ]\+/ ! {d;n}' -e 's/.*\(\.u_boot_list[^ ]\+\).*$/\1/' -e 's/\.[^\.]\+$//' -e ':s /^.\+$/ { p;s/^\(.*\)\.[^\.]*$/\1/;b s }' | sed -n -e 'h;s/$/\a/p;g;s/$/@/p;g;s/$/~/p;' | LC_COLLATE=C sort -u | sed -n -e '/\a$/ { s/\./_/g;s/\a$/__start = .;/p; }' -e '/~$/ { s/\./_/g;s/~$/__end = .;/p; }' -e '/@$/ { s/\(.*\)@$/*(SORT(\1.*));/p }' >  include/u-boot.lst
+arm-none-linux-gnueabi-gcc -E -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -include /root/newchip/u-boot-2013.01/include/u-boot/u-boot.lds.h -DCPUDIR=arch/arm/cpu/arm926ejs  -ansi -D__ASSEMBLY__ -P - </root/newchip/u-boot-2013.01/arch/arm/cpu/u-boot.lds >u-boot.lds
+UNDEF_LST=`arm-none-linux-gnueabi-objdump -x board/xxx/newchip/libnewchip.o api/libapi.o arch/arm/cpu/arm926ejs/libarm926ejs.o arch/arm/cpu/arm926ejs/newchip/libnewchip.o arch/arm/lib/libarm.o common/libcommon.o disk/libdisk.o drivers/bios_emulator/libatibiosemu.o drivers/block/libblock.o drivers/dfu/libdfu.o drivers/dma/libdma.o drivers/fpga/libfpga.o drivers/gpio/libgpio.o drivers/hwmon/libhwmon.o drivers/i2c/libi2c.o drivers/input/libinput.o drivers/misc/libmisc.o drivers/mmc/libmmc.o drivers/mtd/libmtd.o drivers/mtd/nand/libnand.o drivers/mtd/onenand/libonenand.o drivers/mtd/spi/libspi_flash.o drivers/mtd/ubi/libubi.o drivers/net/libnet.o drivers/net/phy/libphy.o drivers/pci/libpci.o drivers/pcmcia/libpcmcia.o drivers/power/battery/libbattery.o drivers/power/fuel_gauge/libfuel_gauge.o drivers/power/libpower.o drivers/power/pmic/libpmic.o drivers/rtc/librtc.o drivers/serial/libserial.o drivers/sound/libsound.o drivers/spi/libspi.o drivers/twserial/libtws.o drivers/usb/eth/libusb_eth.o drivers/usb/gadget/libusb_gadget.o drivers/usb/host/libusb_host.o drivers/usb/musb-new/libusb_musb-new.o drivers/usb/musb/libusb_musb.o drivers/usb/phy/libusb_phy.o drivers/usb/ulpi/libusb_ulpi.o drivers/video/libvideo.o drivers/watchdog/libwatchdog.o fs/cbfs/libcbfs.o fs/cramfs/libcramfs.o fs/ext4/libext4fs.o fs/fat/libfat.o fs/fdos/libfdos.o fs/jffs2/libjffs2.o fs/libfs.o fs/reiserfs/libreiserfs.o fs/ubifs/libubifs.o fs/yaffs2/libyaffs2.o fs/zfs/libzfs.o lib/libfdt/libfdt.o lib/libgeneric.o lib/lzma/liblzma.o lib/lzo/liblzo.o lib/zlib/libz.o net/libnet.o post/libpost.o test/libtest.o | sed  -n -e 's/.*\(_u_boot_list_.*\)/-u\1/p'|sort|uniq`; cd /root/newchip/u-boot-2013.01 && arm-none-linux-gnueabi-ld  -pie -T u-boot.lds -Bstatic -Ttext 0x1020000 $UNDEF_LST arch/arm/cpu/arm926ejs/start.o --start-group api/libapi.o arch/arm/cpu/arm926ejs/libarm926ejs.o arch/arm/cpu/arm926ejs/newchip/libnewchip.o arch/arm/lib/libarm.o common/libcommon.o disk/libdisk.o drivers/bios_emulator/libatibiosemu.o drivers/block/libblock.o drivers/dfu/libdfu.o drivers/dma/libdma.o drivers/fpga/libfpga.o drivers/gpio/libgpio.o drivers/hwmon/libhwmon.o drivers/i2c/libi2c.o drivers/input/libinput.o drivers/misc/libmisc.o drivers/mmc/libmmc.o drivers/mtd/libmtd.o drivers/mtd/nand/libnand.o drivers/mtd/onenand/libonenand.o drivers/mtd/spi/libspi_flash.o drivers/mtd/ubi/libubi.o drivers/net/libnet.o drivers/net/phy/libphy.o drivers/pci/libpci.o drivers/pcmcia/libpcmcia.o drivers/power/battery/libbattery.o drivers/power/fuel_gauge/libfuel_gauge.o drivers/power/libpower.o drivers/power/pmic/libpmic.o drivers/rtc/librtc.o drivers/serial/libserial.o drivers/sound/libsound.o drivers/spi/libspi.o drivers/twserial/libtws.o drivers/usb/eth/libusb_eth.o drivers/usb/gadget/libusb_gadget.o drivers/usb/host/libusb_host.o drivers/usb/musb-new/libusb_musb-new.o drivers/usb/musb/libusb_musb.o drivers/usb/phy/libusb_phy.o drivers/usb/ulpi/libusb_ulpi.o drivers/video/libvideo.o drivers/watchdog/libwatchdog.o fs/cbfs/libcbfs.o fs/cramfs/libcramfs.o fs/ext4/libext4fs.o fs/fat/libfat.o fs/fdos/libfdos.o fs/jffs2/libjffs2.o fs/libfs.o fs/reiserfs/libreiserfs.o fs/ubifs/libubifs.o fs/yaffs2/libyaffs2.o fs/zfs/libzfs.o lib/libfdt/libfdt.o lib/libgeneric.o lib/lzma/liblzma.o lib/lzo/liblzo.o lib/zlib/libz.o net/libnet.o post/libpost.o test/libtest.o board/xxx/newchip/libnewchip.o --end-group /root/newchip/u-boot-2013.01/arch/arm/lib/eabi_compat.o  -L /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2 -lgcc -Map u-boot.map -o u-boot
+arm-none-linux-gnueabi-objcopy -O srec u-boot u-boot.srec
+arm-none-linux-gnueabi-objcopy --gap-fill=0xff -O binary u-boot u-boot.bin
+make -C examples/standalone all
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/examples/standalone'
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage -fno-toplevel-reorder     -o hello_world.o hello_world.c -c
+arm-none-linux-gnueabi-gcc  -g  -Os   -fno-common -ffixed-r8 -msoft-float  -D__KERNEL__ -DCONFIG_SYS_TEXT_BASE=0x1020000 -I/root/newchip/u-boot-2013.01/include -fno-builtin -ffreestanding -nostdinc -isystem /opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2/include -pipe  -DCONFIG_ARM -D__ARM__ -marm -mno-thumb-interwork -mabi=aapcs-linux -march=armv5te -Wall -Wstrict-prototypes -fno-stack-protector -Wno-format-nonliteral -Wno-format-security -fstack-usage -fno-toplevel-reorder     -o stubs.o stubs.c -c
+arm-none-linux-gnueabi-ld  -r -o libstubs.o  stubs.o
+arm-none-linux-gnueabi-ld  -g -Ttext 0xc100000 \
+			-o hello_world -e hello_world hello_world.o libstubs.o \
+			-L/opt/arm-2012.09/bin/../lib/gcc/arm-none-linux-gnueabi/4.7.2 -lgcc
+arm-none-linux-gnueabi-objcopy -O srec hello_world hello_world.srec 2>/dev/null
+arm-none-linux-gnueabi-objcopy -O binary hello_world hello_world.bin 2>/dev/null
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/examples/standalone'
+make -C examples/api all
+make[1]: Entering directory `/root/newchip/u-boot-2013.01/examples/api'
+make[1]: Nothing to be done for `all'.
+make[1]: Leaving directory `/root/newchip/u-boot-2013.01/examples/api'
