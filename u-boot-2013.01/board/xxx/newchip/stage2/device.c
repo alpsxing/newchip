@@ -309,21 +309,6 @@ static const Uint16 DDR_RR = 78;
 Uint32 DEVICE_init()
 {
   Uint32 status = E_PASS;
- 
-   // Mask all interrupts
-  AINTC->INTCTL = 0x4;
-  AINTC->EABASE = 0x0;
-  AINTC->EINT0  = 0x0;
-  AINTC->EINT1  = 0x0;		
-   
-  // Clear all interrupts
-  AINTC->FIQ0 = 0xFFFFFFFF;
-  AINTC->FIQ1 = 0xFFFFFFFF;
-  AINTC->IRQ0 = 0xFFFFFFFF;
-  AINTC->IRQ1 = 0xFFFFFFFF;
-
-  POR_RESET();
-  WDT_RESET();
 
 #ifndef SKIP_LOW_LEVEL_INIT
 
@@ -348,36 +333,8 @@ Uint32 DEVICE_init()
 		status |= DEVICE_DDR2Init();
 
 #endif
- // Leopard 365, disable NAND flash write protect, pull GIO59 high
-  DEVICE_pinmuxControl(2,0xFFFFFFFF,0x00000015);  // EMIFA
-  GPIO->DIR02 &= 0xf7ffffff;
-  GPIO->OUTDATA02 |= 0x08000000;
-
-  // Leopard 365, GIO31 high, reset image sensor
-  GPIO->DIR01 &= 0x7FFFFFFF;
-  GPIO->OUTDATA01 |= 0x80000000;
-
-  // Leopard 365, GIO60 high, reset ethernet phy
-  GPIO->DIR02 &= 0xEFFFFFFF;
-  GPIO->OUTDATA02 |= 0x10000000;
-
-  // Leopard 365, GIO36 high, reset audio codec 3104
-  GPIO->DIR02 &= 0xFFFFFFEF;
-  GPIO->OUTDATA02 |= 0x00000010;
- 
-  // AEMIF Setup
-  if (status == E_PASS) status |= DEVICE_EMIFInit();
-
   // UART0 Setup
   if (status == E_PASS) status |= DEVICE_UART0Init();
-
-  // TIMER0 Setup
-  if (status == E_PASS) status |= DEVICE_TIMER0Init();
-	
-  // I2C0 Setup
-  if (status == E_PASS) status |= DEVICE_I2C0Init();
-
-  WDT_FLAG_ON();
 
   return status;
 }
@@ -800,30 +757,7 @@ Uint32 DEVICE_EMIFInit()
  
 Uint32 DEVICE_UART0Init()
 {
-  UART0->PWREMU_MGNT = 0;         // Reset UART TX & RX components
-
-  UTIL_waitLoop( 100 );
-
-  UART0->MDR = 0x0;
-  UART0->DLL = 0xd;               // Set baud rate	
-  UART0->DLH = 0;
- 
-
-  UART0->FCR = 0x0007;            // Clear UART TX & RX FIFOs
-  UART0->FCR = 0x0000;            // Non-FIFO mode
-  UART0->IER = 0x0007;            // Enable interrupts
-  
-  UART0->LCR = 0x0003;            // 8-bit words,
-                                  // 1 STOP bit generated,
-                                  // No Parity, No Stick paritiy,
-                                  // No Break control
-  
-  UART0->MCR = 0x0000;            // RTS & CTS disabled,
-                                  // Loopback mode disabled,
-                                  // Autoflow disabled
-
-  UART0->PWREMU_MGNT = 0xE001;    // Enable TX & RX componenets
-        
+  uart_init(57600); 
   return E_PASS;
 }
 

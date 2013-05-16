@@ -96,16 +96,6 @@ void main(void)
 
 static Uint32 LOCAL_boot(void)
 {
-  DEVICE_BootMode bootMode;
-
-  // Read boot mode 
-  bootMode = DEVICE_bootMode();
-  
-  if (bootMode == DEVICE_BOOTMODE_UART)
-  {
-    // Wait until the RBL is done using the UART. 
-    while((UART0->LSR & 0x40) == 0 );
-  }
 
   // Platform Initialization
   if ( DEVICE_init() != E_PASS )
@@ -116,8 +106,8 @@ static Uint32 LOCAL_boot(void)
   }
   else
   {
-//    DEBUG_printString(devString);
-//    DEBUG_printString(" initialization passed!\r\n");
+    DEBUG_printString(devString);
+    DEBUG_printString(" initialization passed!\r\n");
   }
 
   // Set RAM pointer to beginning of RAM space
@@ -128,27 +118,12 @@ static Uint32 LOCAL_boot(void)
 //  DEBUG_printString(UBL_VERSION_STRING);
 //  DEBUG_printString("\r\nBooting Catalog Boot Loader\r\nBootMode = ");
   
-#if defined(UBL_NOR)
-  {
-    //Report Bootmode to host
-//    DEBUG_printString("NOR \r\n");
-
-    // Copy binary application image from NOR to RAM
-    if (NORBOOT_copy() != E_PASS)
-    {
-      DEBUG_printString("NOR Boot failed.\r\n");
-      LOCAL_bootAbort();
-    }
-  }
-#else
   {
     //Report Bootmode to host
     DEBUG_printString("Attempt UART boot as fallback\r\n");
     UARTBOOT_copy();      
   }
 
-
-#endif
     
 //  DEBUG_printString("   DONE");
   

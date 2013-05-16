@@ -47,6 +47,63 @@ static Uint32 LOCAL_getStringLen(String seq);
 * Global Function Definitions                               *
 ************************************************************/
 
+#define LCRVAL LCR_8N1					/* 8 data, 1 stop, no parity */
+#define FCRVAL (FCR_FIFO_EN | FCR_RXSR | FCR_TXSR)	/* Clear & enable FIFOs */
+
+#define CFG_APB_CLOCK 500000 
+#define UART_0_BASE  0x30120000
+#define com_port ((UR0431A_UART_t)UART_0_BASE)	
+
+int uart_init(int baudrate)
+{
+	unsigned int baud_divisor;
+	
+	baud_divisor = CFG_APB_CLOCK / 16 / baudrate;	
+
+	if(CFG_APB_CLOCK > (baud_divisor * 16 * baudrate))
+		baud_divisor +=((CFG_APB_CLOCK/16 - baud_divisor * baudrate)*2 > baudrate) ? 1 : 0;
+
+
+	com_port->ier = 0x00;
+	com_port->lcr = LCR_BKSE | LCRVAL;
+	com_port->dll = baud_divisor & 0xff;
+	com_port->dlh = (baud_divisor >> 8) & 0xff;
+	com_port->lcr = LCRVAL;
+	com_port->fcr = FCRVAL;
+	
+	return 0;
+}
+
+void uart_putc(char c)
+{
+
+	while ((com_port->lsr & LSR_THRE) == 0);
+	if (c == '\n')
+	{
+		com_port->thr = '\r';	
+		while ((com_port->lsr & LSR_THRE) == 0);
+		com_port->thr = '\n';
+	}
+	else	
+		com_port->thr = c;
+
+}
+
+void uart_putchar(char c)
+{
+
+        while ((com_port->lsr & LSR_THRE) == 0);
+                com_port->thr = c;
+
+}
+
+int uart_getc (void)
+{
+	while ((com_port->lsr & LSR_DR) == 0);
+	return (com_port->rbr);
+}
+
+
 // Send specified number of bytes 
 Uint32 UART_sendString(String seq, Bool includeNull)
 {
@@ -58,20 +115,9 @@ Uint32 UART_sendString(String seq, Bool includeNull)
 	
   for(i=0;i<numBytes;i++)
   {
-    // Enable Timer one time
-    DEVICE_TIMER0Start();
-    do
-    {
-      status = (UART0->LSR)&(0x20);
-      timerStatus = DEVICE_TIMER0Status();
-    }
-    while (!status && timerStatus);
-
-    if(timerStatus == 0)
-      return E_TIMEOUT;
-		
     // Send byte 
-    (UART0->THR) = seq[i];
+    uart_putchar(seq[i]);
+    //(UART0->THR) = seq[i];
   }
   return E_PASS;
 }
@@ -109,25 +155,9 @@ Uint32 UART_recvStringN(String seq, Uint32* len, Bool stopAtNull)
   	
   for(i=0;i<(*len);i++)
   {
-    // Enable timer one time
-    DEVICE_TIMER0Start();
-    do
-    {
-      status = (UART0->LSR)&(0x01);
-      timerStatus = DEVICE_TIMER0Status();
-    }
-    while (!status && timerStatus);
-
-    if(timerStatus == 0)
-      return E_TIMEOUT;
-
     // Receive byte 
-    seq[i] = (UART0->RBR) & 0xFF;
-
-    // Check status for errors
-    if( ( (UART0->LSR)&(0x1C) ) != 0 )
-      return E_FAIL;
-
+    //seq[i] = (UART0->RBR) & 0xFF;
+    seq[i] = uart_getc();
     if (stopAtNull && (seq[i] == 0x00))
     {
       *len = i;
@@ -147,19 +177,7 @@ Uint32 UART_checkSequence(String seq, Bool includeNull)
 
   for(i=0;i<numBytes;i++)
   {
-    // Enable Timer one time
-    DEVICE_TIMER0Start();
-    do
-    {
-      status = (UART0->LSR)&(0x01);
-      timerStatus = DEVICE_TIMER0Status();
-    }
-    while (!status && timerStatus);
-
-    if(timerStatus == 0)
-      return E_TIMEOUT;
-
-    if( ( (UART0->RBR)&0xFF) != seq[i] )
+    if( uart_getc() != seq[i] )
       return E_FAIL;
   }
   return E_PASS;
@@ -190,28 +208,12 @@ Uint32 UART_recvHexData(Uint32 numBytes, Uint32* data)
     data[i] = 0;
     for(j=0;j<numAsciiChar;j++)
     {
-      /* Enable Timer one time */
-      DEVICE_TIMER0Start();
-      do
-      {
-        status = (UART0->LSR)&(0x01);
-        timerStatus = DEVICE_TIMER0Status();
-      }
-      while (!status && timerStatus);
-
-      if(timerStatus == 0)
-        return E_TIMEOUT;
-
       // Converting ascii to Hex
-      temp[j] = ((UART0->RBR)&0xFF)-48;
+      temp[j] = uart_getc()-48;
       if(temp[j] > 22)    // To support lower case a,b,c,d,e,f
         temp[j] = temp[j] - 39;
       else if(temp[j]>9)  // To support upper case A,B,C,D,E,F
         temp[j] = temp[j] - 7;
-
-      // Checking for bit 1,2,3,4 for reception Error
-      if( ( (UART0->LSR)&(0x1C) ) != 0)
-        return E_FAIL;
 
       data[i] |= (temp[j]<<(shift-(j*4)));
     }
