@@ -111,7 +111,7 @@ static Uint32 LOCAL_boot(void)
   }
 
   // Set RAM pointer to beginning of RAM space
-  UTIL_setCurrMemPtr(0);
+//  UTIL_setCurrMemPtr(0);
 
   // Send some information to host
 //  DEBUG_printString("TI UBL Version: ");
@@ -129,7 +129,7 @@ static Uint32 LOCAL_boot(void)
   
   UTIL_waitLoop(10000);
 
-  DEVICE_TIMER0Stop();
+  //DEVICE_TIMER0Stop();
 
   return E_PASS;    
 }

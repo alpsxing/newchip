@@ -757,7 +757,7 @@ Uint32 DEVICE_EMIFInit()
  
 Uint32 DEVICE_UART0Init()
 {
-  uart_init(57600); 
+  uart_init(115200); 
   return E_PASS;
 }
 

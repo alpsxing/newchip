@@ -7,7 +7,7 @@ ENTRY(boot)
 SECTIONS 
 {  
   SRAMStart  = 0x08000000;
-  SRAMSize   = 0x00010000;
+  SRAMSize   = 0x00004000;
   
   DDRStart   = 0x10000000;
   DDRSize    = 0x10000000;
@@ -17,7 +17,7 @@ SECTIONS
   STACKStart = SRAMStart + SRAMSize;
   
   /* The entry point address is fixed at 0x100 */
-  . = SRAMStart + 0x100;
+  . = SRAMStart + 0x800;
   .boot :   
   {
     *(.boot)
