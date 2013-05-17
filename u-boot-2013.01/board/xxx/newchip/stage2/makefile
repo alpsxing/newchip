@@ -18,8 +18,8 @@ CFLAGS:=-c -Os -Wall -ffreestanding -I./ -DSKIP_LOW_LEVEL_INIT
 
 OBJECTSC:=$(patsubst %.c,%_$(TYPE).o,$(SOURCES)) 
 OBJECTS:=$(OBJECTSC) $(patsubst %.c,%_$(TYPE).o,$(ASSEMBLY))
-EXECUTABLE:=$(PROGRAM)_$(DEVSTRING)_$(TYPE)
-BINARY:=./$(EXECUTABLE).bin
+EXECUTABLE:=$(PROGRAM)_$(DEVSTRING)_$(TYPE).elf
+BINARY:=./$(PROGRAM)_$(DEVSTRING)_$(TYPE).bin
 LINKERSCRIPT=./$(PROGRAM).lds
 
 # Target definitions
