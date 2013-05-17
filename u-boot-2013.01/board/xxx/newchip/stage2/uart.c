@@ -50,7 +50,7 @@ static Uint32 LOCAL_getStringLen(String seq);
 #define LCRVAL LCR_8N1					/* 8 data, 1 stop, no parity */
 #define FCRVAL (FCR_FIFO_EN | FCR_RXSR | FCR_TXSR)	/* Clear & enable FIFOs */
 
-#define CFG_APB_CLOCK 50000 
+#define CFG_APB_CLOCK 50000000 
 #define UART_0_BASE  0x90020000
 #define com_port ((UR0431A_UART_t)UART_0_BASE)	
 
