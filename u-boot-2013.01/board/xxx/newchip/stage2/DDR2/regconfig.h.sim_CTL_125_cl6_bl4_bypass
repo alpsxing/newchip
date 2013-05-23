@@ -1,0 +1,140 @@
+
+/* ****************************************************************
+ *        CADENCE                    Copyright (c) 2001-2011      *
+ *                                   Cadence Design Systems, Inc. *
+ *                                   All rights reserved.         *
+ *                                                                *
+ *  This work may not be copied, modified, re-published,          *
+ *  uploaded, executed, or distributed in any way, in any medium, *
+ *  whether in whole or in part, without prior written permission *
+ *  from Cadence Design Systems, Inc.                             *
+ ******************************************************************
+ *  The values calculated from this script are meant to be        *
+ *  representative programmings.   The values may not reflect the *
+ *  actual required programming for production use.   Please      *
+ *  closely review all programmed values for technical accuracy   *
+ *  before use in production parts.                               *
+ ******************************************************************
+ *                                                                 
+ *   Module:         regconfig.h
+ *   Documentation:  Register programming header file
+ *
+ ******************************************************************
+ ******************************************************************
+ * WARNING:  This file was automatically generated.  Manual
+ * editing may result in undetermined behavior, and may be in
+ * violation of the Cadence Support Agreement.
+ ******************************************************************
+ ******************************************************************/
+
+
+//`timescale 10ps/10ps
+
+// ********************************************************************
+// Option: IP    : IP Mode                       = CTL
+// Option: BL    : Burst Length                  = 4
+// Option: CL    : CAS Latency                   = 6
+// Option: MHZ   : Simulation MHz                = 125
+// Option: AP    : Auto Precharge Mode     (0/1) = 0
+// Option: DLLBP : DLL Bypass Mode         (0/1) = 1
+// Option: HALF  : Half-Memory Support     (0/1) = 0
+// Option: RDIMM : Registered Dimm Support (0/1) = 0
+// Option: AL    : Additive Latency              = 0
+// Option: RSV3  : Reserved                  (0) = 0
+// Option: OUT   : Output file                   = stdout
+// Option: TCK   : Simulation period in ns       = 
+// Option: SOMA  : Memory-SOMA file(s)           = mt47h128m16_25.xml
+// Option: FMT   : File-format       (C|VERILOG) = 0
+// ********************************************************************
+// Memory: mt47h128m16_25.xml
+// ********************************************************************
+
+
+unsigned int const regconfig_CTL_125_cl6_bl4_bypass[71] = {
+  0x00000400, // VERSION:RD:16:16:=0x0000 DRAM_CLASS:RW:8:4:=0x04 START:RW:0:1:=0x00
+  0x00000000, // READ_DATA_FIFO_DEPTH:RD:24:8:=0x00 MAX_CS_REG:RD:16:1:=0x00 MAX_COL_REG:RD:8:4:=0x00 MAX_ROW_REG:RD:0:5:=0x00
+  0x00000000, // ASYNC_CDC_STAGES:RD:24:8:=0x00 WRITE_DATA_FIFO_PTR_WIDTH:RD:16:8:=0x00 WRITE_DATA_FIFO_DEPTH:RD:8:8:=0x00 READ_DATA_FIFO_PTR_WIDTH:RD:0:8:=0x00
+  0x020061A8, // INITAREF:RW:24:4:=0x02 TINIT:RW:0:24:=0x0061a8
+  0x00C80032, // TDLL:RW:16:16:=0x00c8 TCPD:RW:0:16:=0x0032
+  0x00050C00, // ADDITIVE_LAT:RW:24:3:=0x00 WRLAT:RW:16:4:=0x05 CASLAT_LIN:RW:8:4:=0x0c NO_CMD_INIT:RW:0:1:=0x00
+  0x07020202, // TRC:RW:24:8:=0x07 TRRD:RW:16:8:=0x02 TCCD:RW:8:5:=0x02 TBST_INT_INTERVAL:RW:0:3:=0x02
+  0x06020205, // TFAW:RW:24:6:=0x06 TRP:RW:16:5:=0x02 TWTR:RW:8:4:=0x02 TRAS_MIN:RW:0:8:=0x05
+  0x00020202, // TMOD:RW:16:8:=0x02 TMRD:RW:8:5:=0x02 TRTP:RW:0:3:=0x02
+  0x0303222E, // TCKESR:RW:24:8:=0x03 TCKE:RW:16:3:=0x03 TRAS_MAX:RW:0:16:=0x222e
+  0x00020200, // AP:RW:24:1:=0x00 TWR:RW:16:6:=0x02 TRCD:RW:8:8:=0x02 WRITEINTERP:RW:0:1:=0x00
+  0x02040101, // BSTLEN:RW_D:24:3:=0x02 TDAL:RW:16:6:=0x04 TRAS_LOCKOUT:RW:8:1:=0x01 CONCURRENTAP:RW:0:1:=0x01
+  0x00000003, // RESERVED:RW:24:1:=0x00 AREFRESH:WR:16:1:=0x00 REG_DIMM_ENABLE:RW:8:1:=0x00 TRP_AB:RW:0:5:=0x03
+  0x00001901, // TRFC:RW:8:10:=0x0019 TREF_ENABLE:RW:0:1:=0x01
+  0x000003C8, // POWER_DOWN:RW:24:1:=0x00 TREF:RW:0:14:=0x03c8
+  0x00C80002, // TXSR:RW:16:16:=0x00c8 TPDEX:RW:0:16:=0x0002
+  0x0000001A, // PWRUP_SREFRESH_EXIT:RW:24:1:=0x00 SREFRESH:RW+:16:1:=0x00 TXSNR:RW:0:16:=0x001a
+  0x00000100, // RESERVED:RW:24:5:=0x00 CKE_DELAY:RW:16:3:=0x00 ENABLE_QUICK_SREFRESH:RW:8:1:=0x01 SREFRESH_EXIT_NO_REFRESH:RW:0:1:=0x00
+  0x00000000, // WRITE_MODEREG:RW+:0:26:=0x00000000
+  0x00026200, // MR0_DATA_0:RW:8:16:=0x0262 MRW_STATUS:RD:0:8:=0x00
+  0x00000040, // MR2_DATA_0:RW:16:16:=0x0000 MR1_DATA_0:RW:0:16:=0x0040
+  0x00000000, // MR3_DATA_0:RW:16:16:=0x0000 MRSINGLE_DATA_0:RW:0:16:=0x0000
+  0x01000000, // BIST_DATA_CHECK:RW:24:1:=0x01 ADDR_SPACE:RW:16:5:=0x00 BIST_RESULT:RD:8:2:=0x00 BIST_GO:WR:0:1:=0x00
+  0x00000001, // BIST_ADDR_CHECK:RW:0:1:=0x01
+  0x00000000, // BIST_START_ADDRESS:RW:0:31:=0x00000000
+  0x00000000, // BIST_DATA_MASK:RW:0:32:=0x00000000
+  0x0A010200, // APREBIT:RW_D:24:4:=0x0a COL_DIFF:RW:16:3:=0x01 ROW_DIFF:RW:8:3:=0x02 BANK_DIFF:RW:0:2:=0x00
+  0x0101FFFF, // ADDR_COLLISION_MPM_DIS:RW:24:1:=0x01 ADDR_CMP_EN:RW:16:1:=0x01 COMMAND_AGE_COUNT:RW:8:8:=0xff AGE_COUNT:RW:0:8:=0xff
+  0x01010101, // RW_SAME_EN:RW:24:1:=0x01 PRIORITY_EN:RW:16:1:=0x01 PLACEMENT_EN:RW:8:1:=0x01 BANK_SPLIT_EN:RW:0:1:=0x01
+  0x010B0101, // SWAP_EN:RW:24:1:=0x01 NUM_Q_ENTRIES_ACT_DISABLE:RW:16:4:=0x0b DISABLE_RW_GROUP_W_BNK_CONFLICT:RW:8:2:=0x01 RW_SAME_PAGE_EN:RW:0:1:=0x01
+  0x00000000, // Q_FULLNESS:RW:24:4:=0x00 BIG_ENDIAN_EN:RW:16:1:=0x00 REDUC:RW:8:1:=0x00 INHIBIT_DRAM_CMD:RW:0:1:=0x00
+  0x01000000, // CTRLUPD_REQ_PER_AREF_EN:RW:24:1:=0x01 CTRLUPD_REQ:WR:16:1:=0x00 CONTROLLER_BUSY:RD:8:1:=0x00 IN_ORDER_ACCEPT:RW:0:1:=0x00
+  0x00000000, // INT_ACK:WR:16:9:=0x0000 INT_STATUS:RD:0:10:=0x0000
+  0x00000000, // INT_MASK:RW:0:10:=0x0000
+  0x00000000, // OUT_OF_RANGE_ADDR:RD:0:31:=0x00000000
+  0x00000000, // OUT_OF_RANGE_SOURCE_ID:RD:24:3:=0x00 OUT_OF_RANGE_TYPE:RD:16:6:=0x00 OUT_OF_RANGE_LENGTH:RD:0:10:=0x0000
+  0x00000000, // BIST_EXP_DATA:RD:0:64:=0x00000000
+  0x00000000, // BIST_EXP_DATA:RD:0:64:=0x00000000
+  0x00000000, // BIST_FAIL_DATA:RD:0:64:=0x00000000
+  0x00000000, // BIST_FAIL_DATA:RD:0:64:=0x00000000
+  0x00000000, // BIST_FAIL_ADDR:RD:0:31:=0x00000000
+  0x02010303, // WR_TO_ODTH:RW:24:4:=0x02 ODT_EN:RW:16:1:=0x01 TODTH_WR:RW:8:4:=0x03 TODTL_2CMD:RW:0:4:=0x03
+  0x02000000, // R2W_SAMECS_DLY:RW_D:24:3:=0x02 R2R_SAMECS_DLY:RW:16:3:=0x00 ADD_ODT_CLK_W2R_SAMECS:RW:8:4:=0x00 ADD_ODT_CLK_R2W_SAMECS:RW:0:4:=0x00
+  0x00000000, // OCD_ADJUST_PUP_CS_0:RW:24:5:=0x00 OCD_ADJUST_PDN_CS_0:RW:16:5:=0x00 W2W_SAMECS_DLY:RW:8:3:=0x00 W2R_SAMECS_DLY:RW:0:3:=0x00
+  0x00200020, // AHB0_RDCNT:RW:16:11:=0x0020 AHB0_WRCNT:RW:0:11:=0x0020
+  0x00000303, // AHB0_FIFO_TYPE_REG:RW:16:2:=0x00 AHB0_W_PRIORITY:RW:8:3:=0x03 AHB0_R_PRIORITY:RW:0:3:=0x03
+  0x00200020, // AHB1_RDCNT:RW:16:11:=0x0020 AHB1_WRCNT:RW:0:11:=0x0020
+  0x00000303, // AHB1_FIFO_TYPE_REG:RW:16:2:=0x00 AHB1_W_PRIORITY:RW:8:3:=0x03 AHB1_R_PRIORITY:RW:0:3:=0x03
+  0x00200020, // AHB2_RDCNT:RW:16:11:=0x0020 AHB2_WRCNT:RW:0:11:=0x0020
+  0x00000303, // AHB2_FIFO_TYPE_REG:RW:16:2:=0x00 AHB2_W_PRIORITY:RW:8:3:=0x03 AHB2_R_PRIORITY:RW:0:3:=0x03
+  0x00200020, // AHB3_RDCNT:RW:16:11:=0x0020 AHB3_WRCNT:RW:0:11:=0x0020
+  0x00000303, // AHB3_FIFO_TYPE_REG:RW:16:2:=0x00 AHB3_W_PRIORITY:RW:8:3:=0x03 AHB3_R_PRIORITY:RW:0:3:=0x03
+  0x00200020, // AHB4_RDCNT:RW:16:11:=0x0020 AHB4_WRCNT:RW:0:11:=0x0020
+  0x00000303, // AHB4_FIFO_TYPE_REG:RW:16:2:=0x00 AHB4_W_PRIORITY:RW:8:3:=0x03 AHB4_R_PRIORITY:RW:0:3:=0x03
+  0x00200020, // AHB5_RDCNT:RW:16:11:=0x0020 AHB5_WRCNT:RW:0:11:=0x0020
+  0x00000303, // AHB5_FIFO_TYPE_REG:RW:16:2:=0x00 AHB5_W_PRIORITY:RW:8:3:=0x03 AHB5_R_PRIORITY:RW:0:3:=0x03
+  0x00200020, // AHB6_RDCNT:RW:16:11:=0x0020 AHB6_WRCNT:RW:0:11:=0x0020
+  0x07000303, // ARB_CMD_Q_THRESHOLD:RW:24:4:=0x07 AHB6_FIFO_TYPE_REG:RW:16:2:=0x00 AHB6_W_PRIORITY:RW:8:3:=0x03 AHB6_R_PRIORITY:RW:0:3:=0x03
+  0x1C00011C, // AHB1_BDW:RW:24:7:=0x1c AHB0_CURRENT_BDW:RD:16:7:=0x00 AHB0_BDW_OVFLOW:RW:8:1:=0x01 AHB0_BDW:RW:0:7:=0x1c
+  0x011C0001, // AHB2_BDW_OVFLOW:RW:24:1:=0x01 AHB2_BDW:RW:16:7:=0x1c AHB1_CURRENT_BDW:RD:8:7:=0x00 AHB1_BDW_OVFLOW:RW:0:1:=0x01
+  0x00011C00, // AHB3_CURRENT_BDW:RD:24:7:=0x00 AHB3_BDW_OVFLOW:RW:16:1:=0x01 AHB3_BDW:RW:8:7:=0x1c AHB2_CURRENT_BDW:RD:0:7:=0x00
+  0x1C00011C, // AHB5_BDW:RW:24:7:=0x1c AHB4_CURRENT_BDW:RD:16:7:=0x00 AHB4_BDW_OVFLOW:RW:8:1:=0x01 AHB4_BDW:RW:0:7:=0x1c
+  0x011C0001, // AHB6_BDW_OVFLOW:RW:24:1:=0x01 AHB6_BDW:RW:16:7:=0x1c AHB5_CURRENT_BDW:RD:8:7:=0x00 AHB5_BDW_OVFLOW:RW:0:1:=0x01
+  0x00000000, // DLL_RST_DELAY:RW:16:16:=0x0000 CKE_STATUS:RD:8:1:=0x00 AHB6_CURRENT_BDW:RD:0:7:=0x00
+  0x0F000000, // TDFI_PHY_RDLAT:RW_D:24:4:=0x0f UPDATE_ERROR_STATUS:RD:16:7:=0x00 TDFI_PHY_WRLAT:RD:8:4:=0x00 DLL_RST_ADJ_DLY:RW:0:8:=0x00
+  0x00000000, // TDFI_CTRLUPD_MIN:RD:16:4:=0x00 DRAM_CLK_DISABLE:RW:8:1:=0x00 TDFI_RDDATA_EN:RD:0:4:=0x00
+  0x02000790, // TDFI_PHYUPD_TYPE0:RW:16:16:=0x0200 TDFI_CTRLUPD_MAX:RW:0:14:=0x0790
+  0x02000200, // TDFI_PHYUPD_TYPE2:RW:16:16:=0x0200 TDFI_PHYUPD_TYPE1:RW:0:16:=0x0200
+  0x07900200, // TDFI_PHYUPD_RESP:RW:16:14:=0x0790 TDFI_PHYUPD_TYPE3:RW:0:16:=0x0200
+  0x000025D0, // TDFI_CTRLUPD_INTERVAL:RW:0:32:=0x000025d0
+  0x00020602 // TDFI_PHY_WRDATA:RW:16:3:=0x02 WRLAT_ADJ:RW:8:4:=0x06 RDLAT_ADJ:RW:0:4:=0x02
+};
+//* ********************************************************
+//* The below are used only for simulation phy purposes.
+//* Please ignore if using integrated Cadence PHY.
+//* SimulationValues {{{
+//* ********************************************************
+//`define SIM_PHY_VALS_DEFINED 1 // Global define for simulation
+//`define                        SMALL_TREF_ENABLE 8'h0 // CTL
+//`define                            ODT_RD_TIMING 6'h3 // CTL
+//`define                                  TAC_MIN 6'h28 // CTL
+//`define                                  TAC_MAX 6'h28 // CTL
+//`define               LPDDR1_PD_CLK_GATE_DISABLE 1'h0 // CTL
+//`define                          LPDDR1_ATTACHED 1'h0 // CTL
+//* ********************************************************
+//* SimulationValues }}}
+//* ********************************************************

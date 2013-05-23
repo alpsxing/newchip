@@ -1,8 +1,6 @@
 #ifndef _BOOT_H_
 #define _BOOT_H_
 
-#include "stdtypes.h"
-
 // Prevent C++ name mangling
 #ifdef __cplusplus
 extern far "c" {

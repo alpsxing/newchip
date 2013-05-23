@@ -1,0 +1,106 @@
+/* ****************************************************************
+ *        CADENCE                    Copyright (c) 2001-2011      *
+ *                                   Cadence Design Systems, Inc. *
+ *                                   All rights reserved.         *
+ *                                                                *
+ *  This work may not be copied, modified, re-published,          *
+ *  uploaded, executed, or distributed in any way, in any medium, *
+ *  whether in whole or in part, without prior written permission *
+ *  from Cadence Design Systems, Inc.                             *
+ ******************************************************************
+ *  The values calculated from this script are meant to be        *
+ *  representative programmings.   The values may not reflect the *
+ *  actual required programming for production use.   Please      *
+ *  closely review all programmed values for technical accuracy   *
+ *  before use in production parts.                               *
+ ******************************************************************
+ *                                                                 
+ *   Module:         regconfig.h
+ *   Documentation:  Register programming header file
+ *
+ ******************************************************************
+ ******************************************************************
+ * WARNING:  This file was automatically generated.  Manual
+ * editing may result in undetermined behavior, and may be in
+ * violation of the Cadence Support Agreement.
+ ******************************************************************
+ ******************************************************************/
+
+
+// ********************************************************************
+// Option: IP    : IP Mode                       = PHY
+// Option: BL    : Burst Length                  = 4
+// Option: CL    : CAS Latency                   = 6
+// Option: MHZ   : Simulation MHz                = 400
+// Option: AP    : Auto Precharge Mode     (0/1) = 0
+// Option: DLLBP : DLL Bypass Mode         (0/1) = 1
+// Option: HALF  : Half-Memory Support     (0/1) = 0
+// Option: RDIMM : Registered Dimm Support (0/1) = 0
+// Option: AL    : Additive Latency              = 0
+// Option: RSV3  : Reserved                  (0) = 0
+// Option: OUT   : Output file                   = stdout
+// Option: TCK   : Simulation period in ns       = 
+// Option: SOMA  : Memory-SOMA file(s)           = /home/ipdelivery/DBExpress_2013_02_12/mcip/mem/globalunichip.super_rich-UR0431/memory/mt47h64m16_25/memory.xml.sim
+// Option: FMT   : File-format       (C|VERILOG) = 0
+// ********************************************************************
+// Memory: mt47h64m16_25
+// ********************************************************************
+
+unsigned int const regconfig_PHY_400_cl6_bl4_bypass[40] = {
+  0x04120412, // DEN_PHY_DQ_TIMING_REG_0:RW:0:32:=0x04120412
+  0x04140414, // DEN_PHY_DQS_TIMING_REG_0:RW:0:32:=0x04140414
+  0x60010060, // DEN_PHY_GATE_LPBK_CTRL_REG_0:RW:0:32:=0x60010060
+  0x00000044, // DEN_PHY_READ_CTRL_REG_0:RW:0:32:=0x00000044
+  0x00920024, // PHY_DLL_MASTER_CTRL_REG_0:RW:0:32:=0x00920024
+  0x0C0C0C0C, // PHY_DLL_SLAVE_CTRL_REG_0:RW:0:32:=0x0c0c0c0c
+  0x00000000, // DEN_PHY_OBS_REG_0_0:RD:0:32:=0x00000000
+  0x00000000, // PHY_DLL_OBS_REG_0_0:RD:0:32:=0x00000000
+  0x00000000, // PHY_DLL_OBS_REG_1_0:RD:0:32:=0x00000000
+  0x00000000, //
+  0x00000000, //
+  0x00000000, //
+  0x00000000, //
+  0x00000000, //
+  0x00000000, //
+  0x00000000, //
+  0x04120412, // DEN_PHY_DQ_TIMING_REG_1:RW:0:32:=0x04120412
+  0x04140414, // DEN_PHY_DQS_TIMING_REG_1:RW:0:32:=0x04140414
+  0x60010060, // DEN_PHY_GATE_LPBK_CTRL_REG_1:RW:0:32:=0x60010060
+  0x00000044, // DEN_PHY_READ_CTRL_REG_1:RW:0:32:=0x00000044
+  0x00920024, // PHY_DLL_MASTER_CTRL_REG_1:RW:0:32:=0x00920024
+  0x0C0C0C0C, // PHY_DLL_SLAVE_CTRL_REG_1:RW:0:32:=0x0c0c0c0c
+  0x00000000, // DEN_PHY_OBS_REG_0_1:RD:0:32:=0x00000000
+  0x00000000, // PHY_DLL_OBS_REG_0_1:RD:0:32:=0x00000000
+  0x00000000, // PHY_DLL_OBS_REG_1_1:RD:0:32:=0x00000000
+  0x00000000, //
+  0x00000000, //
+  0x00000000, //
+  0x00000000, //
+  0x00000000, //
+  0x00000000, //
+  0x00000000, //
+  0x00004005, // DEN_PHY_CTRL_REG:RW:0:32:=0x00004005
+  0x00000000, // DEN_PHY_PAD_TSEL_REG:RW:0:32:=0x00000000
+  0xFFE7FFE7, // PHY_PAD_DRIVE_REG_0:RW:0:32:=0xffe7ffe7
+  0xFFE7FFE7, // PHY_PAD_DRIVE_REG_1:RW_D+:0:32:=0xffe7ffe7
+  0xFFE7FFE7, // PHY_PAD_DRIVE_REG_2:RW:0:32:=0xffe7ffe7
+  0x00000000, // PHY_PAD_TERM_REG_0:RW_D+:0:32:=0x00000000
+  0x00000000, // PHY_PAD_TERM_REG_1:RW_D+:0:32:=0x00000000
+  0x00000000 // PHY_PAD_TERM_REG_2:RW:0:32:=0x00000000
+};
+
+//* ********************************************************
+//* The below are used only for simulation phy purposes.
+//* Please ignore if using integrated Cadence PHY.
+//* SimulationValues {{{
+//* ********************************************************
+//* #define SIM_PHY_VALS_DEFINED 1 // Global define for simulation
+//* #define                        SMALL_TREF_ENABLE 8'h0 // CTL
+//* #define                            ODT_RD_TIMING 6'h3 // CTL
+//* #define                                  TAC_MIN 6'h28 // CTL
+//* #define                                  TAC_MAX 6'h28 // CTL
+//* #define               LPDDR1_PD_CLK_GATE_DISABLE 1'h0 // CTL
+//* #define                          LPDDR1_ATTACHED 1'h0 // CTL
+//* ********************************************************
+//* SimulationValues }}}
+//* ********************************************************

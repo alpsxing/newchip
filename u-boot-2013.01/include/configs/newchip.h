@@ -11,14 +11,14 @@
 
 /* Memory Info */
 #define CONFIG_NR_DRAM_BANKS		1
-#define PHYS_SDRAM_1			0x20000
-#define PHYS_SDRAM_1_SIZE		(128 << 20)	/* 128 MiB */
+#define PHYS_SDRAM_1			0x10000000
+#define PHYS_SDRAM_1_SIZE		(16 << 20)	/* 16 MiB */
 #define CONFIG_MAX_RAM_BANK_SIZE	(256 << 20)	/* 256 MB */
 
 #define CONFIG_SYS_MALLOC_LEN		(0x10000 + 512 * 1024)
 /* memtest start address */
-#define CONFIG_SYS_MEMTEST_START	0x7020000
-#define CONFIG_SYS_MEMTEST_END		0x8020000	/* 16MB RAM test */
+#define CONFIG_SYS_MEMTEST_START	0x10200000
+#define CONFIG_SYS_MEMTEST_END		0x10400000	/* 2MB RAM test */
 
 #define CONFIG_SYS_SDRAM_BASE		PHYS_SDRAM_1
 #define CONFIG_SYS_INIT_SP_ADDR		\
@@ -28,8 +28,8 @@
 #define CONFIG_SYS_NS16550
 #define CONFIG_SYS_NS16550_SERIAL
 #define CONFIG_SYS_NS16550_REG_SIZE	-4
-#define CONFIG_SYS_NS16550_COM1		0x301200000
-#define CONFIG_SYS_NS16550_CLK		18432000	
+#define CONFIG_SYS_NS16550_COM1		0x90020000
+#define CONFIG_SYS_NS16550_CLK		50000000	
 #define CONFIG_CONS_INDEX		1
 #define CONFIG_BAUDRATE			115200
 
@@ -40,7 +40,7 @@
 
 #define CONFIG_ENV_SIZE			32768
 #define CONFIG_SYS_MAXARGS		32
-#define CONFIG_SYS_LOAD_ADDR		0x820000		/* kernel address */
+#define CONFIG_SYS_LOAD_ADDR		0x10200000		/* kernel address */
 #define CONFIG_SYS_CBSIZE	1024		/* Console I/O Buffer Size  */
 #define CONFIG_SYS_PROMPT	"newchip>"	/* Monitor Command Prompt */
 #define CONFIG_SYS_PBSIZE			/* Print buffer size */ \

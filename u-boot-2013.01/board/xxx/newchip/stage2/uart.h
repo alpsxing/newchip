@@ -1,47 +1,55 @@
-#ifndef _UART_H_
-#define _UART_H_
 
-#include "stdtypes.h"
+struct UR0431A_UART {
+	unsigned char rbr;		/* 0 */
+	int pad1:24;
+	unsigned char ier;		/* 1 */
+	int pad2:24;
+	unsigned char fcr;		/* 2 */
+	int pad3:24;
+	unsigned char lcr;		/* 3 */
+	int pad4:24;
+	unsigned char mcr;		/* 4 */
+	int pad5:24;
+	unsigned char lsr;		/* 5 */
+	int pad6:24;
+	unsigned char msr;		/* 6 */
+	int pad7:24;
+	unsigned char scr;		/* 7 */
+	int pad8:24;
+} __attribute__ ((packed));
 
-// Prevent C++ name mangling
-#ifdef __cplusplus
-extern far "c" {
-#endif
+#define thr rbr
+#define iir fcr
+#define dll rbr
+#define dlh ier
 
-/************************************************************
-* Global Macro Declarations                                 *
-************************************************************/
+typedef volatile struct UR0431A_UART *UR0431A_UART_t;
 
-#define MAXSTRLEN 256
-
-
-/***********************************************************
-* Global Typedef declarations                              *
-***********************************************************/
-
-
-/************************************************************
-* Global Function Declarations                              *
-************************************************************/
-
-// Simple send/recv functions
-Uint32 UART_sendString(String seq, Bool includeNull);
-Uint32 UART_sendHexInt(Uint32 value);
-Uint32 UART_recvString(String seq);
-Uint32 UART_recvStringN(String seq, Uint32* len, Bool stopAtNull);
-
-Uint32 UART_checkSequence(String seq, Bool includeNull);
-Uint32 UART_recvHexData(Uint32 numBytes, Uint32* data);
-
-
-
-/***********************************************************
-* End file                                                 *
-***********************************************************/
-
-#ifdef __cplusplus
-extern far "c" }
-#endif
-
-#endif // End _UART_H_
+#define FCR_FIFO_EN     0x01		/* Fifo enable */
+#define FCR_RXSR        0x02		/* Receiver soft reset */
+#define FCR_TXSR        0x04		/* Transmitter soft reset */
+#define MCR_DTR         0x01
+#define MCR_RTS         0x02
+#define MCR_DMA_EN      0x04
+#define MCR_TX_DFR      0x08
+#define LCR_WLS_MSK	0x03		/* character length slect mask */
+#define LCR_WLS_5	0x00		/* 5 bit character length */
+#define LCR_WLS_6	0x01		/* 6 bit character length */
+#define LCR_WLS_7	0x02		/* 7 bit character length */
+#define LCR_WLS_8	0x03		/* 8 bit character length */
+#define LCR_STB		0x04		/* Number of stop Bits, off = 1, on = 1.5 or 2) */
+#define LCR_PEN		0x08		/* Parity eneble */
+#define LCR_EPS		0x10		/* Even Parity Select */
+#define LCR_STKP	0x20		/* Stick Parity */
+#define LCR_SBRK	0x40		/* Set Break */
+#define LCR_BKSE	0x80		/* Bank select enable */
+#define LSR_DR		0x01		/* Data ready */
+#define LSR_OE		0x02		/* Overrun */
+#define LSR_PE		0x04		/* Parity error */
+#define LSR_FE		0x08		/* Framing error */
+#define LSR_BI		0x10		/* Break */
+#define LSR_THRE	0x20		/* Xmit holding register empty */
+#define LSR_TEMT	0x40		/* Xmitter empty */
+#define LSR_ERR		0x80		/* Error */
+#define LCR_8N1		0x03
 

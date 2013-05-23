@@ -1,58 +1,35 @@
-// General type include
-#include "stdtypes.h"
-
-// This module's header file 
+/*
+ * (C) Copyright 2000
+ * Rob Taylor, Flying Pig Systems. robt@flyingpig.com.
+ *
+ * See file CREDITS for list of people who contributed to this
+ * project.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+ * MA 02111-1307 USA
+ */
+#include "config.h"
+#include "common.h"
 #include "uart.h"
-
-// Device specific CSL
-#include "device.h"
-
-// Misc. utility function module
-#include "util.h"
-
-
-/************************************************************
-* Explicit External Declarations                            *
-************************************************************/
-
-
-/************************************************************
-* Local Macro Declarations                                  *
-************************************************************/
-
-
-/************************************************************
-* Local Typedef Declarations                                *
-************************************************************/
-
-
-/************************************************************
-* Local Function Declarations                               *
-************************************************************/
-
-static Uint32 LOCAL_getStringLen(String seq);
-
-
-/************************************************************
-* Local Variable Definitions                                *
-************************************************************/
-
-
-/************************************************************
-* Global Variable Definitions                               *
-************************************************************/
-
-
-/************************************************************
-* Global Function Definitions                               *
-************************************************************/
+#include "arm_defines.h"
 
 #define LCRVAL LCR_8N1					/* 8 data, 1 stop, no parity */
 #define FCRVAL (FCR_FIFO_EN | FCR_RXSR | FCR_TXSR)	/* Clear & enable FIFOs */
 
-#define CFG_APB_CLOCK 50000000 
-#define UART_0_BASE  0x90020000
-#define com_port ((UR0431A_UART_t)UART_0_BASE)	
+
+#define com_port ((UR0431A_UART_t)UART0_BASE)	
 
 int uart_init(int baudrate)
 {
@@ -103,147 +80,147 @@ int uart_getc (void)
 	return (com_port->rbr);
 }
 
-
-// Send specified number of bytes 
-Uint32 UART_sendString(String seq, Bool includeNull)
+void uart_puts (const char *s)
 {
-  Uint32 status = 0;
-  Int32 i,numBytes;
-  Uint32 timerStatus = 1;
-	
-  numBytes = includeNull?(LOCAL_getStringLen(seq)+1):(LOCAL_getStringLen(seq));
-	
-  for(i=0;i<numBytes;i++)
-  {
-    // Send byte 
-    uart_putchar(seq[i]);
-    //(UART0->THR) = seq[i];
-  }
-  return E_PASS;
+	while (*s) {
+		uart_putc (*s++);
+	}
 }
 
-Uint32 UART_sendHexInt(Uint32 value)
+static void rx(void *addr, unsigned int size)
 {
-  char seq[9];
-  Uint32 i,shift,temp;
+	void *end = addr + size;
 
-  for( i = 0; i < 8; i++)
-  {
-    shift = ((7-i)*4);
-    temp = ((value>>shift) & (0x0000000F));
-    if (temp > 9)
-    {
-      temp = temp + 7;
-    }
-    seq[i] = temp + 48;	
-  }
-  seq[8] = 0;
-  return UART_sendString((String)seq, FALSE);
+	while(addr < end) {
+		*(unsigned char *)addr = uart_getc();
+		addr++;
+	}
 }
 
-Uint32 UART_recvString(String seq)
+static unsigned short wait_cmd(void)
 {
-  Uint32 len = MAXSTRLEN;
-  return UART_recvStringN(seq,&len,TRUE);
+	unsigned char c;
+	unsigned short cmd;
+
+	cmd  = uart_getc();
+	c    = uart_getc();
+	cmd |= (c << 8);
+	return cmd;
 }
 
-// Receive data from UART 
-Uint32 UART_recvStringN(String seq, Uint32* len, Bool stopAtNull)
+static void reply(unsigned short status)
 {
-  Uint32 i, status = 0;
-  Uint32 timerStatus = 1;
-  	
-  for(i=0;i<(*len);i++)
-  {
-    // Receive byte 
-    //seq[i] = (UART0->RBR) & 0xFF;
-    seq[i] = uart_getc();
-    if (stopAtNull && (seq[i] == 0x00))
-    {
-      *len = i;
-      break;
-    }
-  }
-  return E_PASS;
+	uart_putchar(status);
+	uart_putchar(status >> 8);
 }
 
-// More complex send / receive functions
-Uint32 UART_checkSequence(String seq, Bool includeNull)
+unsigned int rx4(void)
 {
-  Uint32 i, numBytes;
-  Uint32 status = 0,timerStatus = 1;
+	unsigned char c;
+	unsigned int ret = 0;
 
-  numBytes = includeNull?(LOCAL_getStringLen(seq)+1):(LOCAL_getStringLen(seq));
-
-  for(i=0;i<numBytes;i++)
-  {
-    if( uart_getc() != seq[i] )
-      return E_FAIL;
-  }
-  return E_PASS;
+	c = uart_getc();
+	ret = c;
+	c = uart_getc();
+	ret |= (c << 8);
+	c = uart_getc();
+	ret |= (c << 16);
+	c = uart_getc();
+	ret |= (c << 24);
+	return ret; 
 }
 
-Uint32 UART_recvHexData(Uint32 numBytes, Uint32* data)
+static void do_set_baudrate(void)
 {
-  Uint32 i,j;
-  Uint32 temp[8];
-  Uint32 timerStatus = 1, status = 0;
-  Uint32 numLongs, numAsciiChar, shift;
-    
-  if(numBytes == 2)
-  {
-    numLongs = 1;
-    numAsciiChar = 4;
-    shift = 12;
-  }
-  else
-  {
-    numLongs = numBytes/4;
-    numAsciiChar = 8;
-    shift = 28;
-  }
+	unsigned int	baudrate = rx4();
+	uart_init(baudrate);
+	u_delay(1000000);
+	reply(E_OK);
+}
 
-  for(i=0;i<numLongs;i++)
-  {
-    data[i] = 0;
-    for(j=0;j<numAsciiChar;j++)
-    {
-      // Converting ascii to Hex
-      temp[j] = uart_getc()-48;
-      if(temp[j] > 22)    // To support lower case a,b,c,d,e,f
-        temp[j] = temp[j] - 39;
-      else if(temp[j]>9)  // To support upper case A,B,C,D,E,F
-        temp[j] = temp[j] - 7;
+static void do_call(void)
+{
+	void(*addr) (void);
 
-      data[i] |= (temp[j]<<(shift-(j*4)));
-    }
-  }
-  return E_PASS;
+
+	addr  = (void *) rx4();
+
+	reply(E_OK);
+	TRACE(KERN_INFO,"Go to 0x%x\n", addr);
+	addr();
+}
+
+static void tx(void *addr, unsigned int size)
+{
+	unsigned char c;
+	void *end = addr + size;
+
+	while(addr < end) {
+		c = *(unsigned char *) addr;
+		addr++;
+		uart_putchar(c);
+	}
+}
+
+static void do_upload(void)
+{
+	void * addr;
+	unsigned int size;
+	unsigned int cksum;
+
+
+	addr       = (void *) rx4();
+	size       = rx4();
+	cksum = checksum32(addr, size);
+
+	reply(E_OK);
+	TRACE(KERN_INFO,"Upload %d bytes at 0x%x\n", size, addr);
+	tx(&cksum, 4);
+	tx(addr, size);
 }
 
 
-/************************************************************
-* Local Function Definitions                                *
-************************************************************/
-
-// Get string length by finding null terminating char
-static Uint32 LOCAL_getStringLen(String seq)
+static void do_download(void)
 {
-  Uint32 i = 0;
-  while ((seq[i] != 0) && (i<MAXSTRLEN)){ i++; }
-  if (i == MAXSTRLEN)
-    return ((Uint32)-1);
-  else
-    return i;
+	void * addr;
+	unsigned int size;
+	unsigned int cksum;
+
+	addr       = (void *) rx4();
+	size       = rx4();
+	cksum = rx4();
+
+	rx(addr, size);
+	if(cksum != checksum32(addr, size)) {
+		reply(E_CHECKSUM);
+	}
+	reply(E_OK);
+	TRACE(KERN_INFO,"Download %d bytes at 0x%x\n", size, addr);
 }
 
 
-/***********************************************************
-* End file                                                 *
-***********************************************************/
-
-/* --------------------------------------------------------------------------
-  HISTORY
-    v1.00 - DJA - 02-Nov-2007
-      Initial release
--------------------------------------------------------------------------- */
+int uart_boot(void)
+{
+	while(1) {
+		switch(wait_cmd()) {
+		case XCMD_CONNECT:
+			reply(E_OK);
+			break;
+		case XCMD_SET_BAUD:
+			do_set_baudrate();
+			break;
+		case XCMD_DOWNLOAD:
+			do_download();
+			break;
+		case XCMD_UPLOAD:
+			do_upload();
+			break;
+		case XCMD_SOC_CALL:
+			do_call();
+			break;
+		default:
+			reply(E_BADCMD);
+		}
+	}
+	return 0;
+}
