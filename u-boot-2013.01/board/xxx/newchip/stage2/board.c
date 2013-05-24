@@ -44,6 +44,8 @@ int check_header(xl_header * head)
 	TRACE(KERN_DEBUG,"header:offset = 0x%x\n", head->offset);
 	TRACE(KERN_DEBUG,"header:entry = 0x%x\n", head->entry);
 	TRACE(KERN_DEBUG,"header:size = 0x%x\n", head->size);
+	TRACE(KERN_DEBUG,"header:loader_cksum = 0x%x\n", head->loader_cksum);
+	TRACE(KERN_DEBUG,"header:header_cksum = 0x%x\n", head->header_cksum);
 
 	if(CFG_HEAD_TAG != *(unsigned int*)(head->tag))
 	{

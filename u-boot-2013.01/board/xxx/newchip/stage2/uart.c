@@ -86,7 +86,7 @@ void uart_puts (const char *s)
 		uart_putc (*s++);
 	}
 }
-
+#ifndef MINI_TEST
 static void rx(void *addr, unsigned int size)
 {
 	void *end = addr + size;
@@ -224,3 +224,5 @@ int uart_boot(void)
 	}
 	return 0;
 }
+#endif
+
