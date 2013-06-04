@@ -1,0 +1,39 @@
+MEMORY
+{
+      /* Main area for test code executable */
+      rom (RX)  :               ORIGIN = 0x00000000, LENGTH = 0x00000800
+      ahbram (WX)  :            ORIGIN = 0x08000000, LENGTH = 0x00004000
+}
+
+SECTIONS
+{
+   .rom  : { vector_arm926.o(.text); } > rom
+   .ram  : { *(.start) startup_arm926.o(.text) *(.text); } > ahbram
+   .ram_rom  : { *(.rodata); } >  ahbram
+
+   .data  : { *(.data) ; } > ahbram
+    __bss_start = . ;
+   .bss   : { *(.bss) *(.sbss) ; } > ahbram
+    __bss_end   = . ;
+   .stack : { . += 0x800; } > ahbram
+}
+
+
+/* ------------------------------------------------------------------------- */
+/* Definitions of identifiers used by sbrk.c, init.c, and the different      */
+/* crt0.s files. Their purpose is to control initialization and memory       */
+/* allocation.                                                               */
+/*                                                                           */
+/* __HEAP_START : Start of memory used by malloc() etc.                      */
+/* __HEAP_END   : End of heap memory                                         */
+/* __SP_INIT    : Initial address of stack pointer                           */
+/* __SP_END     : Only used when stack probing                               */
+/* __DATA_ROM   : Address of initialized data in ROM                         */
+/* __DATA_RAM   : Address of initialized data in RAM                         */
+/* __DATA_END   : End of allocated initialized data                          */
+/* __BSS_START  : Start of uninitialized data                                */
+/* __BSS_END    : End of data to be cleared                                  */
+/* ------------------------------------------------------------------------- */
+__HEAP_START    = ADDR(.bss)+SIZEOF(.bss);  
+__SP_UNDEF      = ADDR(.stack)+SIZEOF(.stack);
+
