@@ -9,7 +9,7 @@
 #define START_ADDR   0
 #define INT_STATUS_ADDR    32
 
-#include "regconfig.h.sim_CTL_125_cl6_bl4_bypass"
+#include "regconfig.h.sim_CTL_126_cl4_bl4_bypass"
 //#include "regconfig.h.sim_PHY_125_cl6_bl4_bypass"
 
 #include "regconfig.h.sim_CTL_400_cl6_bl4_bypass"

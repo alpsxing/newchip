@@ -49,7 +49,7 @@ void DDR2_init_Test(void) {
 
 #ifdef FPGA_C
 	TRACE(KERN_DEBUG,"Initialize DDR2 Controller & UniPHY ...");
-	ctl_cfg = regconfig_CTL_125_cl6_bl4_bypass;
+	ctl_cfg = regconfig_CTL_126_cl4_bl4_bypass;
 	//  phy_cfg = regconfig_PHY_125_cl6_bl4_bypass;
 #else
 	TRACE(KERN_DEBUG,"Initialize DDR2 Controller & PHY ...");
