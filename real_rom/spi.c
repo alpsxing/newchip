@@ -9,6 +9,7 @@
 #define spi_port ((UR0431A_SPI_t)SPI_0_BASE)
 
 static int spi_check_device_id();
+
 static void spi_read_block(unsigned int addr, unsigned int length, unsigned char * buf);
 
 int spi_boot(void)
@@ -21,7 +22,7 @@ int spi_boot(void)
 	spi_init();
 
 	status = spi_check_device_id();
-		
+
 	if (status)
 	{
 	  return status;
@@ -57,7 +58,7 @@ int spi_init(void)
 {
         int clk_div_rate;
 	//set work mode
-        spi_port->ctrl1 = ASS_EN | MOSI_NEG_EN;
+        spi_port->ctrl1 = WP_POS_EN | ASS_EN | MOSI_NEG_EN;
 
 	//set spi clock
 	clk_div_rate    = ((CFG_APB_CLOCK/CFG_SPI_CLOCK)>>1)-1;
@@ -68,15 +69,14 @@ int spi_init(void)
 	return 0;	
 }
 
-unsigned int endian_swap(unsigned int bword)
+void spi_wait_ready()
 {
-         unsigned int lword;
-         lword =  ((bword & 0xff000000) >> 24)
-                 |((bword & 0x00ff0000) >> 8)
-                 |((bword & 0x0000ff00) << 8)
-                 |((bword & 0x000000ff) << 24);
-
-	 return lword;
+        unsigned int rd_data;
+	
+	// Status check
+	do{
+	     rd_data = spi_port->spi_go;
+	}while(rd_data&0x1); 
 }
 
 int spi_check_device_id()
@@ -96,12 +96,9 @@ int spi_check_device_id()
 	//start transaction
 	spi_port->spi_go = 0x1;     
 
-	// Status check
-	do{
-	     rd_data = spi_port->spi_go;
-	}while(rd_data&0x1); 
+	//wait for transaction done
+	spi_wait_ready();
 
- 
 	rd_data = spi_port->Rx0;
 	rd_data = rd_data & ((0x1<<ID_LEN)-1);
 
@@ -116,6 +113,84 @@ int spi_check_device_id()
 	}
 }
 
+void spi_write_en()
+{
+       spi_port->Tx0   =  WRITE_EN_CMD;  
+       spi_port->ctrl0 =  CMD_LEN;
+
+	//start transaction
+	spi_port->spi_go = 0x1;     
+
+	//wait transaction done
+	spi_wait_ready();
+
+	//TRACE(KERN_ERROR, "Flash Write Enable.\n");
+}
+
+
+void spi_write_disable()
+{
+       spi_port->Tx0   =  WRITE_DIS_CMD;  
+       spi_port->ctrl0 =  CMD_LEN;
+
+	//start transaction
+	spi_port->spi_go = 0x1;     
+
+	//wait transaction done
+	spi_wait_ready();
+
+	//TRACE(KERN_ERROR, "Flash Write Enable.\n");
+}
+
+int spi_write_status()
+{
+        unsigned int rd_data; 
+        unsigned int write_protect, write_in_progress;
+ 
+	do {
+	    //read Status 
+            spi_port->Tx0   = (READ_SR_CMD<<8);
+	    
+	    spi_port->ctrl0 = CMD_LEN + 8;
+	    
+	    //start transaction
+	    spi_port->spi_go = 0x1;     
+	    
+	    //wait transaction done
+	    spi_wait_ready();
+	    
+	    //check status
+	    rd_data = spi_port->Rx0;
+	    
+	    write_protect = (rd_data >> 7) & 0x00000001;
+	    write_in_progress = rd_data & 0x00000001;
+
+	} while(write_in_progress & (write_protect == 0));
+
+	//TRACE(KERN_ERROR, "Flash Write Status Check finish.\n");
+
+	return write_protect;
+	
+}
+
+void spi_erase()
+{
+       spi_port->Tx0   =  BULK_ERASE_CMD;  
+       spi_port->ctrl0 =  CMD_LEN;
+
+	//start transaction
+	spi_port->spi_go = 0x1;     
+
+	//wait transaction done
+	spi_wait_ready();
+
+	//wait flash write finish & the flash write is auto disabled
+	spi_write_status();
+        spi_write_en();
+
+	TRACE(KERN_DEBUG, "Flash Bulk Erase.\n");
+}
+
 void spi_read_bytes(unsigned int addr, unsigned int byte_cnt, unsigned char *buf)
 {
         unsigned int rd_data;
@@ -128,11 +203,8 @@ void spi_read_bytes(unsigned int addr, unsigned int byte_cnt, unsigned char *buf
 	//start transaction
 	spi_port->spi_go = 0x1;     
 
-	// Status check
-	do{
-	     rd_data = spi_port->spi_go;
-	}while(rd_data&0x1); 
-
+	//wait transaction done
+	spi_wait_ready();
  
 	rd_data = spi_port->Rx0;
 
@@ -142,6 +214,32 @@ void spi_read_bytes(unsigned int addr, unsigned int byte_cnt, unsigned char *buf
 	buf[0] = (rd_data & 0xff);
 
 	
+}
+
+int spi_write_bytes(unsigned int addr, unsigned int byte_cnt, unsigned int wr_data)
+{
+	unsigned int cmd;
+	unsigned int status;
+ 
+
+	spi_port->Tx1   = (PAGE_PROG_CMD <<ADDR_LEN) | addr;
+	spi_port->Tx0   =  wr_data;
+
+	spi_port->ctrl0 = (CMD_LEN + ADDR_LEN) + 8*byte_cnt;            // TX: 32bits
+
+	//start transaction
+	spi_port->spi_go = 0x1;     
+
+	//wait transaction done
+	spi_wait_ready();
+
+	//wait flash write finish & the flash write is auto disabled
+	status = spi_write_status();
+        spi_write_en();
+ 
+	//TRACE(KERN_ERROR, "Flash Write Data=%x.\n", wr_data);
+	
+	return status;
 }
 
 void spi_read_block(unsigned int addr, unsigned int length, unsigned char * buf)
@@ -158,11 +256,14 @@ void spi_read_block(unsigned int addr, unsigned int length, unsigned char * buf)
       cycle_cnt  = length>>2;
       tail_bcnt  = length%4;
 
+      if (tail_bcnt != 0)
+	cycle_cnt = cycle_cnt + 1;
+
       for (i=0; i<cycle_cnt; i++)
       { 
 	  //read 4 byte each time
 	  spi_read_bytes(flash_addr, 4, temp);
-	  //printf("%c%c%c%c=>%x", temp[0], temp[1], temp[2], temp[3], *((unsigned int * )temp));
+	  //printf("RF %x\n", *((unsigned int * )temp));
 	
 	  for (j=0; j<4; j++)
 	  {
@@ -172,20 +273,48 @@ void spi_read_block(unsigned int addr, unsigned int length, unsigned char * buf)
 	
 	  flash_addr +=4;
       }
-
-      if (tail_bcnt)  //one more read for tail bytes
-      {
-	  spi_read_bytes(flash_addr, tail_bcnt, temp);
-	  
-	  switch(tail_bcnt) {
-	  case 1:  *buf++ = temp[3];
-	    break; 
-	  case 2:  *buf++ = temp[2]; *buf++=temp[3];
-	    break;
-	  case 3:  *buf++ = temp[1]; *buf++=temp[2]; *buf++ = temp[3];
-	    break;
-	  }
-      }
-      
 }
 
+int spi_write_block(volatile unsigned int * addr, unsigned int length)
+{
+      unsigned int  temp; 
+      unsigned int  cycle_cnt;
+      unsigned int  tail_bcnt;
+      unsigned int  source_addr;
+      unsigned int  status;
+      unsigned char buf[4];
+
+      int i,j;
+
+      cycle_cnt  = length>>2;
+      tail_bcnt  = length%4;
+
+      if (tail_bcnt != 0)
+	cycle_cnt = cycle_cnt + 1;
+
+      //must erase before program page
+      spi_write_en();
+      spi_erase();
+
+
+      for (i=0; i<cycle_cnt; i++)
+      { 
+	  temp = *(addr + i);
+
+	  //TRACE(KERN_DEBUG, "Flash Burn at word %d : %x\n", i, temp);
+
+	  //write 4 byte each time
+	  status = spi_write_bytes(4*i, 4, temp);
+
+	  //Read back test
+	  //spi_read_bytes(4*i, 4, buf);
+	  
+	  //TRACE(KERN_DEBUG, "Flash Read Back %x\n", (*((unsigned int *) buf)));
+
+	  if(status) break;
+      }
+
+      
+      
+      return status;
+}

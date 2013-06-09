@@ -87,6 +87,7 @@ void    uart_printf (const char *fmt, ...);
 #define XCMD_UPLOAD       ('U' + 'L' * 256)
 #define XCMD_SOC_MEMSET   ('M' + 'S' * 256)
 #define XCMD_SOC_CALL     ('B' + 'L' * 256)
+#define XCMD_FLASH_BURN   ('B' + 'N' * 256)
 
 int uart_init(unsigned int baudrate);
 int uart_boot(void);
@@ -94,6 +95,7 @@ int uart_boot(void);
 /* driver/spi.c */
 int spi_init(void);
 int spi_boot(void);
+int spi_write_block(volatile unsigned int * addr, unsigned int length);
 
 /* driver/timer.c */
 void u_delay(unsigned int us);

@@ -47,31 +47,37 @@ void start_armboot (void)
 	unsigned int status;
 	unsigned int rom_boot = 1;
 
-	rom_boot = (readl(CFG_BOOT_MODE) &0x30) >> 2 ;
+	rom_boot = (readl(CFG_BOOT_MODE) &0x3c) >> 2 ;
 
 	uart_init((unsigned int)CFG_UART_BAUD_RATE);
 
-        TRACE(KERN_INFO, "\n\n%s\n", version_string);
+    TRACE(KERN_INFO, "\n\n%s\n", version_string);
 
-	if (rom_boot) {
+	switch (rom_boot) {
+        case 0x4:
+        case 0x5:
+        case 0x6:
+        case 0x7:
 #ifdef COSIM
-	    TRACE(KERN_INFO,"SPI\n");
-	    Display("MSG:SPI");
+	        TRACE(KERN_INFO,"SPI\n");
+	        Display("MSG:SPI");
 #else
-	    TRACE(KERN_INFO,"SPI\n");
+	        TRACE(KERN_INFO,"SPI\n");
 #endif
-	    status = spi_boot();
+	        status = spi_boot();
 			
 	    //if spi_boot success, it should never return; 
 	    //if it returns, we should try UART, so no break here
-
+        case 0xf:
 #ifdef COSIM
-	    TRACE(KERN_INFO,"UART\n");   
+	        TRACE(KERN_INFO,"UART\n");   
             Display("MSG:UART");
 #else
-	    TRACE(KERN_INFO,"UART\n");   
+	        TRACE(KERN_INFO,"UART\n");   
 #endif
-	    uart_boot();
+	        uart_boot();
+        default:
+            break;
 	}
 	
 	TRACE(KERN_ERROR,"No Boot Source\n");
