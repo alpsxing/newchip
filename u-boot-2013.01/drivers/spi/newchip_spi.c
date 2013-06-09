@@ -97,7 +97,7 @@ int spi_claim_bus(struct spi_slave *slave)
 	debug("flash id %x\n",rd_data); 
 
 	debug("test cmd 9f\n");	
-	bspi->regs->Tx0 = 0x9F;
+	bspi->regs->Tx1 = 0x9F00;
 	bspi->regs->ctrl0 = 48;		     //TX: 8 & RX: 40
 	bspi->regs->spi_go = 0x1;            // TX: 8bits & RX: 40bits
 	rd_data = bspi->regs->spi_go;
