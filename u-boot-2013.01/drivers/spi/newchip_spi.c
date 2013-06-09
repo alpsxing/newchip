@@ -1,3 +1,4 @@
+#define DEBUG
 #include <common.h>
 #include <spi.h>
 #include <malloc.h>
@@ -25,7 +26,7 @@ struct spi_slave *spi_setup_slave(unsigned int bus, unsigned int cs,
 	ds->slave.cs = cs;
 	ds->regs = (struct bspi_regs *)CONFIG_SYS_SPI_BASE;
 	ds->freq = max_hz;
-
+	debug("spi_setup_slave @%x\n",CONFIG_SYS_SPI_BASE);
 	return &ds->slave;
 }
 
@@ -41,6 +42,7 @@ int spi_claim_bus(struct spi_slave *slave)
 	struct newchip_spi_slave *bspi = to_newchip_spi(slave);
 	unsigned int scalar;
 
+	debug("spi_claim_bus\n");
 	/////////////////////////
 	// CTRL1 register
 	/////////////////////////
