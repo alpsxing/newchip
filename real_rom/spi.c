@@ -208,10 +208,10 @@ void spi_read_bytes(unsigned int addr, unsigned int byte_cnt, unsigned char *buf
  
 	rd_data = spi_port->Rx0;
 
-	buf[3] = (rd_data & 0xff000000) >> 24;	
-	buf[2] = (rd_data & 0xff0000) >> 16;
-	buf[1] = (rd_data & 0xff00) >> 8;
-	buf[0] = (rd_data & 0xff);
+	buf[0] = (rd_data & 0xff000000) >> 24;	
+	buf[1] = (rd_data & 0xff0000) >> 16;
+	buf[2] = (rd_data & 0xff00) >> 8;
+	buf[3] = (rd_data & 0xff);
 
 	
 }
@@ -223,7 +223,7 @@ int spi_write_bytes(unsigned int addr, unsigned int byte_cnt, unsigned int wr_da
  
 
 	spi_port->Tx1   = (PAGE_PROG_CMD <<ADDR_LEN) | addr;
-	spi_port->Tx0   =  wr_data;
+     spi_port->Tx0   = ((wr_data & 0xff)<<24) | ((wr_data & 0xff00)<<8) | ((wr_data & 0xff0000)>>8) | ((wr_data & 0xff000000)>>24);
 
 	spi_port->ctrl0 = (CMD_LEN + ADDR_LEN) + 8*byte_cnt;            // TX: 32bits
 
