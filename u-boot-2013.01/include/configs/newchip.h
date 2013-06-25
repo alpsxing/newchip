@@ -40,9 +40,9 @@
 #undef CONFIG_ENV_IS_IN_FLASH
 #undef CONFIG_ENV_IS_IN_NAND
 #define CONFIG_ENV_IS_IN_SPI_FLASH
-#define CONFIG_ENV_SIZE			(16 << 10)
-#define CONFIG_ENV_OFFSET		(256 << 10)
-#define CONFIG_ENV_SECT_SIZE		4096
+#define CONFIG_ENV_SIZE			(256 << 10)
+#define CONFIG_ENV_OFFSET		(15 << 20)
+#define CONFIG_ENV_SECT_SIZE		(256 << 10)	
 #define CONFIG_SYS_NO_FLASH
 #undef CONFIG_CMD_IMLS
 #undef CONFIG_CMD_FLASH
@@ -63,6 +63,10 @@
 #define CONFIG_ENV_SIZE			32768
 #endif
 
+#define CONFIG_CMD_MEMORY
+#define CONFIG_CMD_LOADB
+
+#define CONFIG_SYS_LONGHELP
 #define CONFIG_SYS_MAXARGS		32
 #define CONFIG_SYS_LOAD_ADDR		0x10200000		/* kernel address */
 #define CONFIG_SYS_CBSIZE	1024		/* Console I/O Buffer Size  */

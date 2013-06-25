@@ -198,6 +198,23 @@ static void do_download(void)
 	TRACE(KERN_INFO,"Download %d bytes at 0x%x\n", size, addr);
 }
 
+static void do_burn(void)
+{
+	void * addr;
+	unsigned int size;
+
+	addr       = (void *) rx4();
+	size       = rx4();
+
+	TRACE(KERN_INFO,"Flash Burn\n");
+
+	spi_write_block(addr, size);
+
+	reply(E_OK);
+	TRACE(KERN_INFO,"Burn %d bytes at 0x%x\n", size, addr);
+}
+
+
 
 int uart_boot(void)
 {
@@ -217,6 +234,9 @@ int uart_boot(void)
 			break;
 		case XCMD_SOC_CALL:
 			do_call();
+			break;
+		case XCMD_FLASH_BURN:
+			do_burn();
 			break;
 		default:
 			reply(E_BADCMD);

@@ -16,8 +16,8 @@ int bspi_test(void)
 
   bspi_regs_ptr = (bspi_regs *)BSPI_BASE;       //init the BSPI regs pointer 
 
-  TRACE(KERN_DEBUG,"CHKPT1: Entering BSPI Test");
-  TRACE(KERN_DEBUG,"BSPI Init");
+  TRACE(KERN_DEBUG,"CHKPT1: Entering BSPI Test\n");
+  TRACE(KERN_DEBUG,"BSPI Init\n");
 
   /////////////////////////
   // CTRL1 register
@@ -48,7 +48,7 @@ int bspi_test(void)
   bspi_regs_ptr->ctrl2 = 0x10009;       // ASIC: 10Mhz SCLK (200Mhz/20)
                                             
 
-  TRACE(KERN_DEBUG,"CHKPT2: Read Manufactuer and Device ID (READ_ID) Command Test ");
+  TRACE(KERN_DEBUG,"CHKPT2: Read Manufactuer and Device ID (READ_ID) Command Test\n");
   /////////////////////////
   // Tx3 register
   /////////////////////////
@@ -76,21 +76,21 @@ int bspi_test(void)
       rd_data = bspi_regs_ptr->spi_go;
   }
 
-  TRACE(KERN_DEBUG,"READ_ID Command DONE");
+  TRACE(KERN_DEBUG,"READ_ID Command DONE\n");
 
   rd_data = bspi_regs_ptr->Rx0;
   rd_data = rd_data & 0xffff;
-  TRACE(KERN_DEBUG,"READ_ID Command Data = %x", rd_data);
+  TRACE(KERN_DEBUG,"READ_ID Command Data = %x\n", rd_data);
 
   expect_val = 0x0117;
   if (rd_data != expect_val)  {
-    TRACE(KERN_DEBUG,"ERROR: read id = %x, expected = %x", rd_data, expect_val);
+    TRACE(KERN_DEBUG,"ERROR: read id = %x, expected = %x\n", rd_data, expect_val);
   }
-  TRACE(KERN_DEBUG,"read id = %x, as expected", rd_data);
+  TRACE(KERN_DEBUG,"read id = %x, as expected\n", rd_data);
 
 
-  TRACE(KERN_DEBUG,"Okay");
-  TRACE(KERN_DEBUG,"--------------------");
+  TRACE(KERN_DEBUG,"Okay\n");
+  TRACE(KERN_DEBUG,"--------------------\n");
 
 }
 

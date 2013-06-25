@@ -30,7 +30,7 @@
 #define DMAC_INTR_REG_OFFSET     0x000002c0
 #define DMAC_SW_HSHK_REG_OFFSET  0x00000368
 #define DMAC_MISC_REG_OFFSET     0x00000398
-
+#define CFG_BOOT_MODE (0x90000024)
 
 // Defines for data manipulations
 

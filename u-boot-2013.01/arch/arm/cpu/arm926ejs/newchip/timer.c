@@ -36,6 +36,8 @@
 #include <div64.h>
 #include <asm/io.h>
 
+#include "timer.h"
+
 int timer_init(void)
 {
 
@@ -58,8 +60,25 @@ ulong get_timer(ulong base)
 }
 
 /* delay x useconds AND preserve advance timstamp value */
-void __udelay(unsigned long usec)
+void __udelay(unsigned long us)
 {
+
+#if 0
+        *TIMER_1_CTRL = 0;
+
+        *TIMER_1_LOAD_VALUE = 0xFFFFFFFF;
+
+        *TIMER_1_CTRL = 1;
+
+	while(1)
+	{
+		if((0xFFFFFFFF - *TIMER_1_CUR_VALUE) > (us*TICK_PER_USECOND))
+		{
+			*TIMER_1_CTRL = 0;
+			return;
+		}
+	}	
+#endif	
 }
 
 ulong get_tbclk(void)
