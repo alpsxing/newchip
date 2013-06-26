@@ -84,7 +84,7 @@ int bspi_test(void);
 void DDR2_init_Test(void);
 int mem_test(int ddr_base, int ddr_size );
 int spi_boot(void);
-int spi_write_block(volatile unsigned int * addr, unsigned int length);
+int spi_write_block(unsigned int offset, volatile unsigned int * addr, unsigned int length);
 
 /* driver/uart.c */
 #define E_OK        ('O' + 'K' * 256)

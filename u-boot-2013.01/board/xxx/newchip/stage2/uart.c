@@ -202,16 +202,18 @@ static void do_burn(void)
 {
 	void * addr;
 	unsigned int size;
-
+	unsigned int offset;
+	
+	offset	   = rx4();
 	addr       = (void *) rx4();
 	size       = rx4();
 
 	TRACE(KERN_INFO,"Flash Burn\n");
 
-	spi_write_block(addr, size);
+	spi_write_block(offset, addr, size);
 
 	reply(E_OK);
-	TRACE(KERN_INFO,"Burn %d bytes at 0x%x\n", size, addr);
+	TRACE(KERN_INFO,"Burn %d bytes at 0x%x\n", size, offset);
 }
 
 

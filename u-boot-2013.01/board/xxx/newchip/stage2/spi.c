@@ -36,7 +36,7 @@ int spi_boot(void)
         }
 
 	//read image header
-	spi_read_block(0x40000, XL_HEAD_SIZE,(unsigned char *)&head);	
+	spi_read_block(UBOOT_FLASH_ADDR, XL_HEAD_SIZE,(unsigned char *)&head);	
 
 	//check image header
         status = check_header(&head);
@@ -48,7 +48,7 @@ int spi_boot(void)
 
 	TRACE(KERN_DEBUG,"Start download codes @%x\n", head.entry);
 
-	spi_read_block(0x40000+head.offset, head.size, (unsigned char *)head.entry);
+	spi_read_block(UBOOT_FLASH_ADDR+head.offset, head.size, (unsigned char *)head.entry);
 
 	if(checksum32((void*)head.entry, head.size) != head.loader_cksum)
         {
@@ -181,30 +181,36 @@ int spi_write_status()
 	
 }
 
-void spi_erase()
+void spi_erase(unsigned int addr, int len)
 {
-       spi_port->Tx0   =  BULK_ERASE_CMD;  
-       spi_port->ctrl0 =  CMD_LEN;
+	unsigned int offset = 0;
 
-	//start transaction
-	spi_port->spi_go = 0x1;     
+	do
+	{	
+		spi_port->Tx0   =  (CMD_ERASE_64K<<(ADDR_LEN))|(addr+offset);
 
-	//wait transaction done
-	spi_wait_ready();
+		spi_port->ctrl0 =  32;
 
-	//wait flash write finish & the flash write is auto disabled
-	spi_write_status();
-        spi_write_en();
+		//start transaction
+		spi_port->spi_go = 0x1;     
 
+		//wait transaction done
+		spi_wait_ready();
+
+		//wait flash write finish & the flash write is auto disabled
+		spi_write_status();
+		spi_write_en();
+		offset += 0x10000;
+	}while(offset < len);
 	TRACE(KERN_DEBUG, "Flash Bulk Erase.\n");
 }
 
 void spi_read_bytes(unsigned int addr, unsigned int byte_cnt, unsigned char *buf)
 {
-        unsigned int rd_data;
-    
+	unsigned int rd_data;
+
 	spi_port->Tx1   = (READ_BYTES_CMD<<(ADDR_LEN)) | addr;
-	
+
 	spi_port->ctrl0 = (CMD_LEN + ADDR_LEN) + 8*byte_cnt;            // TX: 32bits & RX: 8*byte_cnt
 
 	//start transaction
@@ -212,7 +218,7 @@ void spi_read_bytes(unsigned int addr, unsigned int byte_cnt, unsigned char *buf
 
 	//wait transaction done
 	spi_wait_ready();
- 
+
 	rd_data = spi_port->Rx0;
 
 	buf[0] = (rd_data & 0xff000000) >> 24;	
@@ -220,16 +226,16 @@ void spi_read_bytes(unsigned int addr, unsigned int byte_cnt, unsigned char *buf
 	buf[2] = (rd_data & 0xff00) >> 8;
 	buf[3] = (rd_data & 0xff);
 
-	
+
 }
 
 int spi_write_bytes(unsigned int addr, unsigned int byte_cnt, unsigned int wr_data)
 {
 	unsigned int status;
- 
+
 
 	spi_port->Tx1   = (PAGE_PROG_CMD <<ADDR_LEN) | addr;
-     spi_port->Tx0   = ((wr_data & 0xff)<<24) | ((wr_data & 0xff00)<<8) | ((wr_data & 0xff0000)>>8) | ((wr_data & 0xff000000)>>24);
+	spi_port->Tx0   = ((wr_data & 0xff)<<24) | ((wr_data & 0xff00)<<8) | ((wr_data & 0xff0000)>>8) | ((wr_data & 0xff000000)>>24);
 
 	spi_port->ctrl0 = (CMD_LEN + ADDR_LEN) + 8*byte_cnt;            // TX: 32bits
 
@@ -241,86 +247,86 @@ int spi_write_bytes(unsigned int addr, unsigned int byte_cnt, unsigned int wr_da
 
 	//wait flash write finish & the flash write is auto disabled
 	status = spi_write_status();
-        spi_write_en();
- 
+	spi_write_en();
+
 	//TRACE(KERN_ERROR, "Flash Write Data=%x.\n", wr_data);
-	
+
 	return status;
 }
 
 void spi_read_block(unsigned int addr, unsigned int length, unsigned char * buf)
 {
-      unsigned char temp[4]; //128 bit buffer
-      unsigned int  cycle_cnt;
-      unsigned int  tail_bcnt;
-      unsigned int  flash_addr;
+	unsigned char temp[4]; //128 bit buffer
+	unsigned int  cycle_cnt;
+	unsigned int  tail_bcnt;
+	unsigned int  flash_addr;
 
-      int i,j;
+	int i,j;
 
-      flash_addr= addr & ((1<<ADDR_LEN)-1);
+	flash_addr= addr & ((1<<ADDR_LEN)-1);
 
-      cycle_cnt  = length>>2;
-      tail_bcnt  = length%4;
+	cycle_cnt  = length>>2;
+	tail_bcnt  = length%4;
 
-      if (tail_bcnt != 0)
-	cycle_cnt = cycle_cnt + 1;
+	if (tail_bcnt != 0)
+		cycle_cnt = cycle_cnt + 1;
 
-      for (i=0; i<cycle_cnt; i++)
-      { 
-	  //read 4 byte each time
-	  spi_read_bytes(flash_addr, 4, temp);
-	  //printf("RF %x\n", *((unsigned int * )temp));
-	
-	  for (j=0; j<4; j++)
-	  {
-	      *buf = temp[j];
-	       buf++;
-	  }  
-	
-	  flash_addr +=4;
-      }
+	for (i=0; i<cycle_cnt; i++)
+	{ 
+		//read 4 byte each time
+		spi_read_bytes(flash_addr, 4, temp);
+		//printf("RF %x\n", *((unsigned int * )temp));
+
+		for (j=0; j<4; j++)
+		{
+			*buf = temp[j];
+			buf++;
+		}  
+
+		flash_addr +=4;
+	}
 }
 
-int spi_write_block(volatile unsigned int * addr, unsigned int length)
+int spi_write_block(unsigned int offset, volatile unsigned int * addr, unsigned int length)
 {
-      unsigned int  temp; 
-      unsigned int  cycle_cnt;
-      unsigned int  tail_bcnt;
-      //unsigned int  source_addr;
-      unsigned int  status;
-      //unsigned char buf[4];
+	unsigned int  temp; 
+	unsigned int  cycle_cnt;
+	unsigned int  tail_bcnt;
+	//unsigned int  source_addr;
+	unsigned int  status;
+	//unsigned char buf[4];
 
-      int i;
+	int i;
 
-      cycle_cnt  = length>>2;
-      tail_bcnt  = length%4;
+	cycle_cnt  = length>>2;
+	tail_bcnt  = length%4;
 
-      if (tail_bcnt != 0)
-	cycle_cnt = cycle_cnt + 1;
+	if (tail_bcnt != 0)
+		cycle_cnt = cycle_cnt + 1;
 
-      //must erase before program page
-      spi_write_en();
-      spi_erase();
+	//must erase before program page
+	spi_write_en();
+	spi_erase(offset,length);
 
 
-      for (i=0; i<cycle_cnt; i++)
-      { 
-	  temp = *(addr + i);
+	for (i=0; i<cycle_cnt; i++)
+	{ 
+		temp = *(addr + i);
 
-	  //TRACE(KERN_DEBUG, "Flash Burn at word %d : %x\n", i, temp);
+		//TRACE(KERN_DEBUG, "Flash Burn at word %d : %x\n", i, temp);
 
-	  //write 4 byte each time
-	  status = spi_write_bytes(4*i, 4, temp);
+		//write 4 byte each time
+		status = spi_write_bytes(offset+4*i, 4, temp);
 
-	  //Read back test
-	  //spi_read_bytes(4*i, 4, buf);
-	  
-	  //TRACE(KERN_DEBUG, "Flash Read Back %x\n", (*((unsigned int *) buf)));
+		//Read back test
+		//spi_read_bytes(4*i, 4, buf);
 
-	  if(status) break;
-      }
+		//TRACE(KERN_DEBUG, "Flash Read Back %x\n", (*((unsigned int *) buf)));
 
-      
-      
-      return status;
+		if(status) break;
+	}
+
+
+
+	return status;
 }

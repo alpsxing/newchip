@@ -38,6 +38,7 @@ typedef volatile struct UR0431A_SPI *UR0431A_SPI_t;
 #define PAGE_PROG_CMD    0x02
 #define READ_BYTES_CMD   0x03 
 #define BULK_ERASE_CMD   0xc7
+#define CMD_ERASE_64K	0xd8
 #define CMD_LEN          8    /*bit*/ 
 #define ID_LEN           16   /*bit*/
 #define ADDR_LEN         24   /*bit*/

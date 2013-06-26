@@ -1,0 +1,139 @@
+1.download u-boot.img
+
+./download -p USB0 -r u-boot.img 
+Using USB Serial Port 0
+file size is 98632
+header:tag = 0x4e554658
+header:offset = 0x18
+header:entry = 0x10100000
+header:size = 0x18130
+header:loader_cksum = 0xd6c8b77
+header:header_cksum = 0x6bd35317
+Connecting to the board...
+Conneced to the board OK.
+Download 98608 bytes at 0x10100000
+Go to 0x10100000
+
+
+U-Boot 2013.01 (Jun 26 2013 - 04:28:16)
+
+DRAM:  32 MiB
+WARNING: Caches not enabled
+SF: Got idcodes
+00000000: 01 20 18 03 00    . ...
+SF: Detected S25FL128P_256K with page size 256 KiB, total 16 MiB
+
+2.download u-boot.img at u-boot using ymodem protocol
+at u-boot shell
+newchip>loady                                                                  
+## Ready for binary (ymodem) download to 0x10200000 at 115200 bps...           
+C 0x00018104 = 98564 Bytes   
+
+at minicom side:
+CTRL-A-S select ymodem then select the u-boot.img file
+
+3. burn to flash
+newchip>sf probe                                                                
+SF: Got idcodes                                                                 
+00000000: 01 20 18 03 00    . ...                                               
+SF: Detected S25FL128P_256K with page size 256 KiB, total 16 MiB                
+
+newchip>sf update 0x10200000 0x40000 0x40000                                    
+SF: erase d8  4  0  0 (80000)                                                   
+cmd_len = 4 data_len = 0                                                        
+spi_write_status return 0                                                       
+SF: Successfully erased 262144 bytes @ 0x40000                                  
+SF: program success 262144 bytes @ 0x40000                                      
+262144 bytes written, 0 bytes skipped in 0.0s, speed 268435456 B/s
+
+4. update stage2.img
+at u-boot shell
+newchip>loady                                                                   
+## Ready for binary (ymodem) download to 0x10200000 at 115200 bps...            
+C  
+at minicom side:
+CTRL-A-S select ymodem then select the stage2.img file
+
+newchip>sf update 0x10200000 0 0x40000                                          
+SF: erase d8  0  0  0 (40000)                                                   
+cmd_len = 4 data_len = 0                                                        
+spi_write_status return 0                                                       
+SF: Successfully erased 262144 bytes @ 0x0   
+SF: program success 262144 bytes @ 0x0                                          
+262144 bytes written, 0 bytes skipped in 0.0s, speed 268435456 B/s   
+
+reset the board.
+
+UR0431A 0.1                                                             
+CHKPT1: Entering BSPI Test                                                      
+BSPI Init                                                                       
+CHKPT2: Read Manufactuer and Device ID (READ_ID) Command Test                   
+READ_ID Command DONE                                                            
+READ_ID Command Data = 117                                                      
+read id = 117, as expected                                                      
+Okay                                                                            
+--------------------                                                            
+DDR2 Initialization Test BEGIN ...                                              
+Initialize DDR2 Controller & UniPHY ...                                         
+Initialize CTL Register ...                                                     
+Initialize CTL Register Done                                                    
+Assert DDR_CTL start parameter.                                                 
+Probe DDR_CTL initialization complete interrupt...                              
+DDR_CTL initialization complete interrupt asserted!                             
+MSG:DDR2_Init_Done                                                              
+Initialize DDR2 Controller Done.                                                
+DDR2 Access Range Test...                                                       
+DDR2 Access Range Test...Done                                                   
+  > Data test (quick)                                                           
+  > Addr test (quick)          
+  > Inv addr test (quick)                                                       
+    A16                                                                         
+header:tag = 0x4e554658                                                         
+header:offset = 0x18                                                            
+header:entry = 0x10100000                                                       
+header:size = 0x180ec                                                           
+header:loader_cksum = 0x86f84341                                                
+header:header_cksum = 0xe55f0a9d                                                
+Start download codes @10100000                                                  
+Ready to go use codes @10100000                                                 
+Booting X-loader at 0x10100000                                                  
+                                                                                
+                                                                                
+U-Boot 2013.01 (Jun 26 2013 - 05:17:23)                                         
+                                                                                
+DRAM:  32 MiB                                                                   
+WARNING: Caches not enabled                                                     
+SF: Got idcodes                                                                 
+00000000: 01 20 18 03 00    . ...                                               
+SF: Detected S25FL128P_256K with page size 256 KiB, total 16 MiB                
+In:    serial                                                                   
+Out:   serial                                                                   
+Err:   serial              
+newchip>help                                                                    
+?       - alias for 'help'
+base    - print or set address offset                                           
+bootm   - boot application image from memory                                    
+cmp     - memory compare                                                        
+cp      - memory copy                                                           
+crc32   - checksum calculation                                                  
+env     - environment handling commands                                         
+go      - start application at address 'addr'                                   
+help    - print command description/usage                                       
+loadb   - load binary file over serial line (kermit mode)                       
+loady   - load binary file over serial line (ymodem mode)                       
+loop    - infinite loop on address range                                        
+md      - memory display                                                        
+mm      - memory modify (auto-incrementing address)                             
+mtest   - simple RAM read/write test                                            
+mw      - memory write (fill)                                                   
+nm      - memory modify (constant address)                                      
+printenv- print environment variables                                           
+reset   - Perform RESET of the CPU                                              
+saveenv - save environment variables to persistent storage                      
+setenv  - set environment variables                                             
+sf      - SPI flash sub-system                                                  
+sspi    - SPI utility command                                                   
+version - print monitor, compiler and linker version                            
+newchip>
+
+
