@@ -6,33 +6,33 @@ void InitializeDDR(const unsigned int *ctl_cfg, const unsigned int *phy_cfg) {
 
 	unsigned int i;
 
-	TRACE(KERN_DEBUG,"Initialize CTL Register ...");
+	TRACE(KERN_DEBUG,"Initialize CTL Register ...\n");
 	for(i=0;i<71;i++) {
 		WriteRegCTL(i, ctl_cfg[i]);
 	}
-	TRACE(KERN_DEBUG,"Initialize CTL Register Done");
+	TRACE(KERN_DEBUG,"Initialize CTL Register Done\n");
 
 #ifndef FPGA_C
-	TRACE(KERN_DEBUG,"Initialize PHY Register ...");
+	TRACE(KERN_DEBUG,"Initialize PHY Register ...\n");
 	for(i=32;i<40;i++) {
 		WriteRegPHY(i, phy_cfg[i]);
 	}
 	for(i=0;i<32;i++) {
 		WriteRegPHY(i, phy_cfg[i]);
 	}
-	TRACE(KERN_DEBUG,"Initialize PHY Register Done");
+	TRACE(KERN_DEBUG,"Initialize PHY Register Done\n");
 #endif
 
-	TRACE(KERN_DEBUG,"Assert DDR_CTL start parameter.");
+	TRACE(KERN_DEBUG,"Assert DDR_CTL start parameter.\n");
 	WriteRegCTL( START_ADDR, 0x401);
 
-	TRACE(KERN_DEBUG,"Probe DDR_CTL initialization complete interrupt...");
+	TRACE(KERN_DEBUG,"Probe DDR_CTL initialization complete interrupt...\n");
 	while( (ReadRegCTL(INT_STATUS_ADDR) & (1<<2)) == 0) {
 		u_delay(100);
 	}
-	TRACE(KERN_DEBUG,"DDR_CTL initialization complete interrupt asserted!");
+	TRACE(KERN_DEBUG,"DDR_CTL initialization complete interrupt asserted!\n");
 
-	TRACE(KERN_DEBUG,"MSG:DDR2_Init_Done");
+	TRACE(KERN_DEBUG,"MSG:DDR2_Init_Done\n");
 
 }
 
@@ -45,21 +45,21 @@ void DDR2_init_Test(void) {
 	long long unsigned pattern[32];
 	long long unsigned *rd_phy_val, *tmp_val; 
 
-	TRACE(KERN_DEBUG,"DDR2 Initialization Test BEGIN ...");
+	TRACE(KERN_DEBUG,"DDR2 Initialization Test BEGIN ...\n");
 
 #ifdef FPGA_C
-	TRACE(KERN_DEBUG,"Initialize DDR2 Controller & UniPHY ...");
+	TRACE(KERN_DEBUG,"Initialize DDR2 Controller & UniPHY ...\n");
 	ctl_cfg = regconfig_CTL_126_cl4_bl4_bypass;
 	//  phy_cfg = regconfig_PHY_125_cl6_bl4_bypass;
 #else
-	TRACE(KERN_DEBUG,"Initialize DDR2 Controller & PHY ...");
+	TRACE(KERN_DEBUG,"Initialize DDR2 Controller & PHY ...\n");
 	ctl_cfg = regconfig_CTL_400_cl6_bl4_bypass;
 	phy_cfg = regconfig_PHY_400_cl6_bl4_bypass;
 #endif
 	InitializeDDR(ctl_cfg, phy_cfg);
-	TRACE(KERN_DEBUG,"Initialize DDR2 Controller Done.");
+	TRACE(KERN_DEBUG,"Initialize DDR2 Controller Done.\n");
 
-	TRACE(KERN_DEBUG,"DDR2 Access Range Test...");
+	TRACE(KERN_DEBUG,"DDR2 Access Range Test...\n");
 
 	//////////////////////////////////
 	//
@@ -70,7 +70,7 @@ void DDR2_init_Test(void) {
 
 
 
-	TRACE(KERN_DEBUG,"DDR2 Access Range Test...Done");
+	TRACE(KERN_DEBUG,"DDR2 Access Range Test...Done\n");
 
 }
 

@@ -5,6 +5,7 @@
 #define CFG_PRINTF
 #define CURRENT_DEBUG_LEVEL 4
 #define CFG_APB_CLOCK 50000000 
-
+#define UBOOT_FLASH_ADDR	0x40000
+#define UBOOT_FLASH_LEN		0x40000
 #endif
 

@@ -83,6 +83,8 @@ int uart_boot(void);
 int bspi_test(void);
 void DDR2_init_Test(void);
 int mem_test(int ddr_base, int ddr_size );
+int spi_boot(void);
+int spi_write_block(unsigned int offset, volatile unsigned int * addr, unsigned int length);
 
 /* driver/uart.c */
 #define E_OK        ('O' + 'K' * 256)
@@ -97,14 +99,12 @@ int mem_test(int ddr_base, int ddr_size );
 #define XCMD_UPLOAD       ('U' + 'L' * 256)
 #define XCMD_SOC_MEMSET   ('M' + 'S' * 256)
 #define XCMD_SOC_CALL     ('B' + 'L' * 256)
+#define XCMD_FLASH_BURN   ('B' + 'N' * 256)
 
 // serial defines 
 #define CFG_PRINTF
 #define CFG_UART_BAUD_RATE 115200
 #define CFG_PBSIZE 256
-
-//spi defines
-#define CFG_SPI_CLK 500000
 
 
 #endif	/* __COMMON_H_ */

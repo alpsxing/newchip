@@ -10,7 +10,7 @@ OBJCOPY=$(CROSSCOMPILE)objcopy
 OBJDUMP=$(CROSSCOMPILE)objdump
 LDFLAGS=-Wl,-T$(LINKERSCRIPT) -nostdlib  
 OBJCOPYFLAGS = --gap-fill 0xFF -S
-SOURCES=$(PROGRAM).c boot.c uart.c printf.c string.c timer.c board.c ddr2_init.c bspi_test.c div0.c
+SOURCES=$(PROGRAM).c boot.c uart.c printf.c string.c timer.c board.c ddr2_init.c bspi_test.c spi.c div0.c
 ASSEMBLY= _divsi3.S _udivsi3.S _umodsi3.S
 ENTRYPOINT=boot
 
