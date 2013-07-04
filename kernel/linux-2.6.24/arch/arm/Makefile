@@ -136,6 +136,7 @@ endif
  machine-$(CONFIG_ARCH_NS9XXX)	   := ns9xxx
  textofs-$(CONFIG_ARCH_NS9XXX)	   := 0x00108000
  machine-$(CONFIG_ARCH_DAVINCI)	   := davinci
+ machine-$(CONFIG_ARCH_NEWCHIP)	   := newchip
  machine-$(CONFIG_ARCH_KS8695)     := ks8695
   incdir-$(CONFIG_ARCH_MXC)	   := mxc
  machine-$(CONFIG_ARCH_MX3)	   := mx3

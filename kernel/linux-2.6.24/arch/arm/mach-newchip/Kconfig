@@ -1,0 +1,16 @@
+if ARCH_NEWCHIP
+
+menu "NewChip Implementations"
+
+comment "NewChip Board Type"
+
+config MACH_NEWCHIP_EVM
+	bool "NewChip EVM"
+	default y
+	help
+	  Configure this option to specify the whether the board used
+	  for development is a NewChip EVM
+
+endmenu
+
+endif

@@ -394,6 +394,15 @@ config ARCH_LH7A40X
 	  core with a wide array of integrated devices for
 	  hand-held and low-power applications.
 
+config ARCH_NEWCHIP
+	bool "NewChip"
+	select GENERIC_TIME
+	select GENERIC_CLOCKEVENTS
+	select GENERIC_GPIO
+	help
+	  Support for XXX's NewChip platform.
+
+
 config ARCH_DAVINCI
 	bool "TI DaVinci"
 	select GENERIC_TIME
@@ -474,6 +483,8 @@ source "arch/arm/mach-netx/Kconfig"
 source "arch/arm/mach-ns9xxx/Kconfig"
 
 source "arch/arm/mach-davinci/Kconfig"
+
+source "arch/arm/mach-newchip/Kconfig"
 
 source "arch/arm/mach-ks8695/Kconfig"
 
