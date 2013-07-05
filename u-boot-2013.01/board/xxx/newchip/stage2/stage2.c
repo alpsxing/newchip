@@ -8,9 +8,9 @@ void main(void)
 
 	uart_init(115200);
 #ifdef MINI_TEST
-	uart_puts("UR0431A 0.1");
+	uart_puts("UR0431A 0.3");
 #else
-	printf("UR0431A 0.1\n");
+	printf("UR0431A 0.3\n");
 
 	bspi_test();	
 	DDR2_init_Test();
