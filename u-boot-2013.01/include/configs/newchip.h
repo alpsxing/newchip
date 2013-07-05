@@ -68,7 +68,7 @@
 
 #define CONFIG_SYS_LONGHELP
 #define CONFIG_SYS_MAXARGS		32
-#define CONFIG_SYS_LOAD_ADDR		0x10200000		/* kernel address */
+#define CONFIG_SYS_LOAD_ADDR		0x10700000		/* kernel address */
 #define CONFIG_SYS_CBSIZE	1024		/* Console I/O Buffer Size  */
 #define CONFIG_SYS_PROMPT	"newchip>"	/* Monitor Command Prompt */
 #define CONFIG_SYS_PBSIZE			/* Print buffer size */ \
