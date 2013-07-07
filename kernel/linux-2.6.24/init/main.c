@@ -504,11 +504,14 @@ void __init __attribute__((weak)) smp_setup_processor_id(void)
 {
 }
 
+#include <asm/arch/uncompress.h>
+
 asmlinkage void __init start_kernel(void)
 {
 	char * command_line;
 	extern struct kernel_param __start___param[], __stop___param[];
 
+	debug_putstr("start_kernel\n");
 	smp_setup_processor_id();
 
 	/*

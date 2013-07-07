@@ -63,6 +63,7 @@
 #define CONFIG_ENV_SIZE			32768
 #endif
 
+#define CONFIG_CMDLINE_TAG
 #define CONFIG_CMD_MEMORY
 #define CONFIG_CMD_LOADB
 

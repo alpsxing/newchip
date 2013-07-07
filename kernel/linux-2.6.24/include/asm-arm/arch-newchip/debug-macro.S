@@ -12,9 +12,9 @@
 		.macro addruart, rx
 		mrc	p15, 0, \rx, c1, c0
 		tst	\rx, #1			@ MMU enabled?
-		moveq	\rx, #0x90020000	@ physical base address
-		movne	\rx, #0xf0020000	@ virtual base
-		orr	\rx, \rx, #0x00c20000   @ UART 0
+		moveq	\rx, #0x90000000	@ physical base address
+		movne	\rx, #0xf0000000	@ virtual base
+		orr	\rx, \rx, #0x00020000   @ UART 0
 		.endm
 
 #define UART_SHIFT	2

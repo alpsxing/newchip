@@ -31,5 +31,19 @@ static inline void flush(void)
 		barrier();
 }
 
+static void debug_putstr(const char *ptr)
+{
+	char c;
+
+	while ((c = *ptr++) != '\0') {
+		if (c == '\n')
+			putc('\r');
+		putc(c);
+	}
+
+	flush();
+}
+
+
 #define arch_decomp_setup()
 #define arch_decomp_wdog()
