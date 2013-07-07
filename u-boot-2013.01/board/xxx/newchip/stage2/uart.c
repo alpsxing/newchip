@@ -193,27 +193,51 @@ static void do_download(void)
 	rx(addr, size);
 	if(cksum != checksum32(addr, size)) {
 		reply(E_CHECKSUM);
+        return;
 	}
-	reply(E_OK);
-	TRACE(KERN_INFO,"Download %d bytes at 0x%x\n", size, addr);
+    reply(E_OK);
+    TRACE(KERN_INFO,"Download %d bytes at 0x%x\n", size, addr);
 }
 
 static void do_burn(void)
 {
-	void * addr;
+	void * entry;
+    int offset;
+    void * ld_entry;
 	unsigned int size;
-	unsigned int offset;
+    unsigned int cksum;
+    xl_header *hdr;
+    int i;
 	
-	offset	   = rx4();
-	addr       = (void *) rx4();
+	entry	   = (void *) rx4();
 	size       = rx4();
+	offset     = rx4();
+    ld_entry   = (void *) rx4();
+    cksum = rx4();
+
+    rx(entry + XL_HEAD_SIZE, size);
+	if(cksum != checksum32(entry + XL_HEAD_SIZE, size)) {
+		reply(E_CHECKSUM);
+        return;
+	}
+
+    hdr = (xl_header *)entry;
+    hdr->tag[0] = 'X';
+    hdr->tag[1] = 'F';
+    hdr->tag[2] = 'U';
+    hdr->tag[3] = 'N';
+    hdr->offset = XL_HEAD_SIZE;
+    hdr->entry = (unsigned int)ld_entry;
+    hdr->size = size;
+    hdr->loader_cksum = cksum;
+    hdr->header_cksum = checksum32(hdr, XL_HEAD_SIZE - 4);
 
 	TRACE(KERN_INFO,"Flash Burn\n");
 
-	spi_write_block(offset, addr, size);
+	spi_write_block(offset, entry, size + XL_HEAD_SIZE);
 
 	reply(E_OK);
-	TRACE(KERN_INFO,"Burn %d bytes at 0x%x\n", size, offset);
+	TRACE(KERN_INFO,"Burn %d bytes at 0x%x\n", size + XL_HEAD_SIZE, offset);
 }
 
 
