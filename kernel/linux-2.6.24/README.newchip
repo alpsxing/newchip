@@ -1,0 +1,9 @@
+http://free-electrons.com/doc/kernel-porting.pdf
+http://www.linux-arm.org/pub/LinuxKernel/WebHome/aleph-porting.pdf
+http://gicl.cs.drexel.edu/people/sevy/linux/ARM_Linux_boot_sequence.html
+
+build the kernel:
+make ARCH=arm CROSS_COMPILE=/opt/arm-2012.09/bin/arm-none-linux-gnueabi- newchip_defconfig
+
+make ARCH=arm CROSS_COMPILE=/opt/arm-2012.09/bin/arm-none-linux-gnueabi- uImage
+
