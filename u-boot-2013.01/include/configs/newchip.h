@@ -67,6 +67,8 @@
 #define CONFIG_CMD_MEMORY
 #define CONFIG_CMD_LOADB
 
+#define CONFIG_BOOTARGS "mem=32M console=ttyS0,115200n8"
+
 #define CONFIG_SYS_LONGHELP
 #define CONFIG_SYS_MAXARGS		32
 #define CONFIG_SYS_LOAD_ADDR		0x10700000		/* kernel address */
