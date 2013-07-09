@@ -79,7 +79,6 @@ static void __init
 newchip_evm_map_io(void)
 {
 	newchip_map_common_io();
-	uart_puts("newchip_map_common_io\n");
 }
 
 static __init void newchip_evm_init(void)
