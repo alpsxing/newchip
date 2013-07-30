@@ -664,6 +664,16 @@ config ARCH_U300
 	help
 	  Support for ST-Ericsson U300 series mobile platforms.
 
+config ARCH_NEWCHIP
+	bool "NewChip"
+	select CPU_ARM926T
+	select GENERIC_TIME
+	select GENERIC_CLOCKEVENTS
+	select GENERIC_GPIO
+	select ZONE_DMA
+	help
+	  Support for XXX's NewChip platform.
+
 config ARCH_DAVINCI
 	bool "TI DaVinci"
 	select CPU_ARM926T
@@ -793,6 +803,8 @@ source "arch/arm/mach-netx/Kconfig"
 source "arch/arm/mach-ns9xxx/Kconfig"
 
 source "arch/arm/mach-davinci/Kconfig"
+
+source "arch/arm/mach-newchip/Kconfig"
 
 source "arch/arm/mach-ks8695/Kconfig"
 
