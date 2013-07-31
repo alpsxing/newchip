@@ -17,6 +17,8 @@
  */
 
 #include <common.h>
+#include <miiphy.h>
+#include <netdev.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -41,5 +43,18 @@ void dram_init_banksize(void)
 {
 	gd->bd->bi_dram[0].start = CONFIG_SYS_SDRAM_BASE;
 	gd->bd->bi_dram[0].size = gd->ram_size;
+}
+
+int board_eth_init(bd_t *bis)
+{
+        int ret = 0;
+
+#if defined(CONFIG_DESIGNWARE_ETH)
+        u32 interface = PHY_INTERFACE_MODE_MII;
+        if (designware_initialize(0, CONFIG_NEWCHIP_ETHBASE, CONFIG_DW0_PHY,
+                                interface) >= 0)
+                ret++;
+#endif
+        return ret;
 }
 

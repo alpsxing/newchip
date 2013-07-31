@@ -63,6 +63,20 @@
 #define CONFIG_ENV_SIZE			32768
 #endif
 
+/* Ethernet driver configuration */
+#define CONFIG_MII
+#define CONFIG_DESIGNWARE_ETH
+#define CONFIG_NET_MULTI
+#define CONFIG_PHY_RESET_DELAY			10000		/* in usec */
+//#define CONFIG_DW_AUTONEG
+#define CONFIG_DW_ALTDESCRIPTOR
+#define CONFIG_DW0_PHY			0	
+#define CONFIG_NEWCHIP_ETHBASE		0x80020000
+#define CONFIG_CMD_NET
+#define CONFIG_CMD_MII
+#define CONFIG_CMD_PING	
+#define CONFIG_CMD_NFS
+
 #define CONFIG_CMDLINE_TAG
 #define CONFIG_CMD_MEMORY
 #define CONFIG_CMD_LOADB

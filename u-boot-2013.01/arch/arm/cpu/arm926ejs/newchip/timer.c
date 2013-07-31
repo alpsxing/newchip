@@ -63,6 +63,8 @@ ulong get_timer(ulong base)
 void __udelay(unsigned long us)
 {
 
+	int count;
+	volatile int *pcount = &count;
 #if 0
         *TIMER_1_CTRL = 0;
 
@@ -79,6 +81,12 @@ void __udelay(unsigned long us)
 		}
 	}	
 #endif	
+	us = us*100;
+	while(us > 0)
+	{
+		us--;
+		*pcount++;
+	}
 }
 
 ulong get_tbclk(void)

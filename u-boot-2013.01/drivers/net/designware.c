@@ -118,8 +118,9 @@ static int mac_reset(struct eth_device *dev)
 	start = get_timer(0);
 	while (get_timer(start) < timeout) {
 		if (!(readl(&dma_p->busmode) & DMAMAC_SRST))
+		{
 			return 0;
-
+		}
 		/* Try again after 10usec */
 		udelay(10);
 	};
@@ -134,6 +135,7 @@ static int dw_write_hwaddr(struct eth_device *dev)
 	u32 macid_lo, macid_hi;
 	u8 *mac_id = &dev->enetaddr[0];
 
+	printf("hwaddr %x:%x:%x:%x:%x:%x\n",mac_id[0],mac_id[1],mac_id[2],mac_id[3],mac_id[4],mac_id[5]);
 	macid_lo = mac_id[0] + (mac_id[1] << 8) + \
 		   (mac_id[2] << 16) + (mac_id[3] << 24);
 	macid_hi = mac_id[4] + (mac_id[5] << 8);
@@ -176,6 +178,7 @@ static int dw_eth_init(struct eth_device *dev, bd_t *bis)
 
 	conf = FRAMEBURSTENABLE | DISABLERXOWN;
 
+	
 	if (priv->speed != 1000)
 		conf |= MII_PORTSELECT;
 
@@ -389,8 +392,9 @@ static int dw_reset_phy(struct eth_device *dev)
 	while (get_timer(start) < timeout) {
 		eth_mdio_read(dev, phy_addr, MII_BMCR, &ctrl);
 		if (!(ctrl & BMCR_RESET))
+		{
 			break;
-
+		}
 		/* Try again after 10usec */
 		udelay(10);
 	};
