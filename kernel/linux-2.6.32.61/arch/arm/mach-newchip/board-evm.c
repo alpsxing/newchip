@@ -34,6 +34,9 @@
 
 #include <mach/debug_uart.h>
 
+#include <linux/phy.h>
+#include <linux/stmmac_plat.h>
+
 /* other misc. init functions */
 void __init newchip_irq_init(void);
 void __init newchip_map_common_io(void);
@@ -70,12 +73,57 @@ static struct platform_device serial_device = {
 	},
 };
 
+static struct plat_stmmacphy_data phy_private_data = {
+        .bus_id = 0,
+        .phy_addr = 0,
+        .phy_mask = 0,
+        .interface = PHY_INTERFACE_MODE_MII,
+};
+ 
+static struct platform_device phy_device = {
+        .name           = PHY_RESOURCE_NAME,
+        .id             = 0,
+        .dev = {
+                .platform_data = &phy_private_data,
+         }
+};
+
+static struct plat_stmmacenet_data eth_private_data = {
+	.bus_id   = 0,
+	.enh_desc = 1,
+	.has_gmac = 0,
+	.pbl = 32,
+};
+
+static struct platform_device eth_device = {
+	.name           = STMMAC_RESOURCE_NAME,
+	.id             = 0,
+	.num_resources  = 2,
+	.resource       = (struct resource[]) {
+		{
+			.start  = MAC_BASE,
+			.end    = MAC_BASE + 0x2000,
+			.flags  = IORESOURCE_MEM,
+		},
+		{
+			.name   = "macirq",
+			.start  = 20,
+			.end    = 20,
+			.flags  = IORESOURCE_IRQ,
+		},
+	},
+	.dev = {
+		.platform_data = &eth_private_data,
+	}
+};
 
 static struct platform_device *newchip_evm_devices[] __initdata = {
 	&serial_device,
+	&phy_device,
+	&eth_device,
 };
 
-static void __init
+	static void __init
 newchip_evm_map_io(void)
 {
 	newchip_map_common_io();
@@ -85,7 +133,7 @@ static __init void newchip_evm_init(void)
 {
 	uart_puts("newchip_evm_init\n");
 	platform_add_devices(newchip_evm_devices,
-			     ARRAY_SIZE(newchip_evm_devices));
+			ARRAY_SIZE(newchip_evm_devices));
 }
 
 static __init void newchip_evm_irq_init(void)
@@ -96,12 +144,12 @@ static __init void newchip_evm_irq_init(void)
 
 
 MACHINE_START(NEWCHIP_EVM, "NewChip EVM")
-	/* Maintainer: MontaVista Software <source@mvista.com> */
-	.phys_io      = IO_PHYS,
+/* Maintainer: MontaVista Software <source@mvista.com> */
+.phys_io      = IO_PHYS,
 	.io_pg_offst  = (io_p2v(IO_PHYS) >> 18) & 0xfffc,
 	.boot_params  = (NEWCHIP_DDR_BASE + 0x100),
 	.map_io	      = newchip_evm_map_io,
 	.init_irq     = newchip_evm_irq_init,
 	.timer	      = &newchip_timer,
 	.init_machine = newchip_evm_init,
-MACHINE_END
+	MACHINE_END

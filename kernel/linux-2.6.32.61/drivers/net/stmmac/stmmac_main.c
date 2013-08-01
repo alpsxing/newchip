@@ -45,14 +45,13 @@
 #include <linux/phy.h>
 #include <linux/if_vlan.h>
 #include <linux/dma-mapping.h>
-#include <linux/stm/soc.h>
+//#include <linux/stm/soc.h>
+#include <linux/stmmac_plat.h> 
 #include "stmmac.h"
 
-#define STMMAC_RESOURCE_NAME	"stmmaceth"
-#define PHY_RESOURCE_NAME	"stmmacphy"
-
-#undef STMMAC_DEBUG
-/*#define STMMAC_DEBUG*/
+#define BUS_ID_SIZE		64
+//#undef STMMAC_DEBUG
+#define STMMAC_DEBUG
 #ifdef STMMAC_DEBUG
 #define DBG(nlevel, klevel, fmt, args...) \
 		((void)(netif_msg_##nlevel(priv) && \
@@ -479,7 +478,8 @@ static void init_dma_desc_rings(struct net_device *dev)
 	for (i = 0; i < rxsize; i++) {
 		struct dma_desc *p = priv->dma_rx + i;
 
-		skb = netdev_alloc_skb_ip_align(dev, bfsize);
+		//skb = netdev_alloc_skb_ip_align(dev, bfsize);
+		skb = netdev_alloc_skb(dev, bfsize);
 		if (unlikely(skb == NULL)) {
 			pr_err("%s: Rx init fails; skb is NULL\n", __func__);
 			break;
@@ -1373,8 +1373,8 @@ static inline void stmmac_rx_refill(struct stmmac_priv *priv)
 
 			skb = __skb_dequeue(&priv->rx_recycle);
 			if (skb == NULL)
-				skb = netdev_alloc_skb_ip_align(priv->dev,
-								bfsize);
+				skb = netdev_alloc_skb(priv->dev, bfsize);
+				//skb = netdev_alloc_skb_ip_align(priv->dev, bfsize);
 
 			if (unlikely(skb == NULL))
 				break;
