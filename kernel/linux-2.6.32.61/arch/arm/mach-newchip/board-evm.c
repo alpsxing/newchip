@@ -91,7 +91,7 @@ static struct platform_device phy_device = {
 static struct plat_stmmacenet_data eth_private_data = {
 	.bus_id   = 0,
 	.enh_desc = 1,
-	.has_gmac = 0,
+	.has_gmac = 1,
 	.pbl = 32,
 };
 
