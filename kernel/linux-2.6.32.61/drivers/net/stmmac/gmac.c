@@ -32,8 +32,8 @@
 #include "stmmac.h"
 #include "gmac.h"
 
-//#undef GMAC_DEBUG
-#define GMAC_DEBUG
+#undef GMAC_DEBUG
+//#define GMAC_DEBUG
 #undef FRAME_FILTER_DEBUG
 /*#define FRAME_FILTER_DEBUG*/
 #ifdef GMAC_DEBUG

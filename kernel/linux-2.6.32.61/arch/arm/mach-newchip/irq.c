@@ -92,7 +92,7 @@ void __init newchip_irq_init(void)
 	write_irq_reg(FIQ_REG_INTMASK, 0x03); //mask fiq interrupt
 	write_irq_reg(IRQ_REG_PLEVEL, 0);
 
-	for (i = 0; i < NR_NEWCHIP_IRQS; i++) {
+	for (i = 0; i < NR_IRQS; i++) {
 		set_irq_chip(i, &newchip_irq_chip);
 		set_irq_handler(i, handle_level_irq);
 		set_irq_flags(i, IRQF_VALID);//no probe and auto enable		

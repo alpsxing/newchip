@@ -49,8 +49,7 @@
 #define FIQ_REG_FINALSTATUS        0xd4//Fast interrupt final status register
 #define IRQ_REG_PLEVEL             0xd8//IRQ System Priority Level Register
 
-#define NR_NEWCHIP_IRQS	16
-#define NR_IRQS		16
+#define NR_IRQS		32	
 
 #define IRQ0_UART0	0
 #define IRQ1_UART1	1

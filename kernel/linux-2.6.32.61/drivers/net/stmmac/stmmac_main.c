@@ -258,8 +258,8 @@ static void stmmac_adjust_link(struct net_device *dev)
 				} else {
 					ctrl &= ~priv->mac_type->hw.link.port;
 				}
-				priv->fix_mac_speed(priv->bsp_priv,
-						    phydev->speed);
+				if(priv->fix_mac_speed)
+					priv->fix_mac_speed(priv->bsp_priv, phydev->speed);
 				break;
 			default:
 				if (netif_msg_link(priv))
@@ -1017,12 +1017,13 @@ static int stmmac_open(struct net_device *dev)
 
 	stmmac_verify_args();
 
+#if 0	//FIXME: depend on u-boot configure the PHY
 	ret = stmmac_init_phy(dev);
 	if (unlikely(ret)) {
 		pr_err("%s: Cannot attach to PHY (error: %d)\n", __func__, ret);
 		return ret;
 	}
-
+#endif
 	/* Request the IRQ lines */
 	ret = request_irq(dev->irq, &stmmac_interrupt,
 			  IRQF_SHARED, dev->name, dev);

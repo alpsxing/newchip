@@ -95,6 +95,7 @@ static struct plat_stmmacenet_data eth_private_data = {
 	.pbl = 32,
 };
 
+static u64 eth_dmamask = DMA_BIT_MASK(32);
 static struct platform_device eth_device = {
 	.name           = STMMAC_RESOURCE_NAME,
 	.id             = 0,
@@ -113,6 +114,8 @@ static struct platform_device eth_device = {
 		},
 	},
 	.dev = {
+		.dma_mask		= &eth_dmamask,
+		.coherent_dma_mask	= DMA_BIT_MASK(32),
 		.platform_data = &eth_private_data,
 	}
 };

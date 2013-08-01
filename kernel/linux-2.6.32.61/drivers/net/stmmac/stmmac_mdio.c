@@ -56,11 +56,9 @@ static int stmmac_mdio_read(struct mii_bus *bus, int phyaddr, int phyreg)
 			((phyreg << 6) & (0x000007C0)));
 	regValue |= MII_BUSY;	/* in case of GMAC */
 
-	printk("mdio_read %x_%x:%x\n",ioaddr + mii_address,phyaddr,phyreg);
 	do {} while (((readl(ioaddr + mii_address)) & MII_BUSY) == 1);
 	writel(regValue, ioaddr + mii_address);
 	do {} while (((readl(ioaddr + mii_address)) & MII_BUSY) == 1);
-	printk("mdio read end\n");
 	/* Read the data from the MII data register */
 	data = (int)readl(ioaddr + mii_data);
 
@@ -90,7 +88,6 @@ static int stmmac_mdio_write(struct mii_bus *bus, int phyaddr, int phyreg,
 
 	value |= MII_BUSY;
 
-	printk("mdio_write %x_%x:%x %x\n",ioaddr + mii_address,phyaddr,phyreg,phydata);
 	/* Wait until any existing MII operation is complete */
 	do {} while (((readl(ioaddr + mii_address)) & MII_BUSY) == 1);
 
@@ -101,7 +98,6 @@ static int stmmac_mdio_write(struct mii_bus *bus, int phyaddr, int phyreg,
 	/* Wait until any existing MII operation is complete */
 	do {} while (((readl(ioaddr + mii_address)) & MII_BUSY) == 1);
 
-	printk("mdio_write end\n");
 	return 0;
 }
 
@@ -122,7 +118,6 @@ static int stmmac_mdio_reset(struct mii_bus *bus)
 		priv->phy_reset(priv->bsp_priv);
 	}
 
-	printk("stmmac_mdio_reset\n");
 	/* This is a workaround for problems with the STE101P PHY.
 	 * It doesn't complete its reset until at least one clock cycle
 	 * on MDC, so perform a dummy mdio read.
@@ -159,7 +154,6 @@ int stmmac_mdio_register(struct net_device *ndev)
 	if (priv->phy_addr != -1)
 		irqlist[priv->phy_addr] = priv->phy_irq;
 
-	printk("mdio_register\n");
 	new_bus->name = "STMMAC MII Bus";
 	new_bus->read = &stmmac_mdio_read;
 	new_bus->write = &stmmac_mdio_write;
@@ -174,7 +168,6 @@ int stmmac_mdio_register(struct net_device *ndev)
 		pr_err("%s: Cannot register as MDIO bus\n", new_bus->name);
 		goto bus_register_fail;
 	}
-	printk("mdio_register 1\n");
 
 	priv->mii = new_bus;
 
@@ -195,7 +188,6 @@ int stmmac_mdio_register(struct net_device *ndev)
 		}
 	}
 
-	printk("mdio_register 2\n");
 	if (!found)
 		pr_warning("%s: No PHY found\n", ndev->name);
 
