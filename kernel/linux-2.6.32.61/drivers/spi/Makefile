@@ -39,6 +39,7 @@ obj-$(CONFIG_SPI_STMP3XXX)		+= spi_stmp.o
 obj-$(CONFIG_SPI_SPIDEV)	+= spidev.o
 obj-$(CONFIG_SPI_TLE62X0)	+= tle62x0.o
 # 	... add above this line ...
+obj-$(CONFIG_SPI_NEWCHIP)	+= newchip_spi.o
 
 # SPI slave controller drivers (upstream link)
 # 	... add above this line ...

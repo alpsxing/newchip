@@ -17,6 +17,8 @@
 #include <linux/mtd/partitions.h>
 #include <linux/mtd/physmap.h>
 
+#include <linux/spi/spi.h>
+#include <linux/spi/flash.h>
 #include <asm/setup.h>
 #include <asm/io.h>
 #include <asm/mach-types.h>
@@ -24,7 +26,6 @@
 
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
-#include <asm/mach/flash.h>
 
 #include <mach/common.h>
 
@@ -126,8 +127,59 @@ static struct platform_device *newchip_evm_devices[] __initdata = {
 	&eth_device,
 };
 
-	static void __init
-newchip_evm_map_io(void)
+
+/*
+ *	ST M25P28 SPI NOR FLASH
+*/
+
+static struct mtd_partition newchip_M25P28_partitions[] = {
+	{
+		.name		= "stage2",
+		.offset		= 0,
+		.size		= SZ_256K,
+		.mask_flags	= 0,
+	},
+	{
+		.name		= "stage3",
+		.offset		= SZ_256K,
+		.size		= SZ_2M - SZ_256K,
+		.mask_flags	= 0,
+	},
+	{
+		.name		= "kernel",
+		.offset		= SZ_2M,
+		.size		= SZ_4M,
+		.mask_flags	= 0,
+	},
+	{
+		.name		= "data",
+		.offset		= SZ_2M + SZ_4M,
+		.size		= SZ_1M,
+		.mask_flags	= 0,
+	}
+};
+
+static struct flash_platform_data newchip_M25P28_info = {
+	.name = "m25p128",
+	.parts = newchip_M25P28_partitions,
+	.nr_parts = ARRAY_SIZE(newchip_M25P28_partitions),
+	.type = "m25p128"
+};
+
+
+static struct spi_board_info newchip_spi_board_info[] = {
+	{
+		.modalias = "m25p128",
+		.bus_num = 0,					// spi channel 0
+		.chip_select = 0,
+
+		.platform_data = &newchip_M25P28_info,
+		.max_speed_hz = 20*1000*1000,	// default 2Mhz
+		.mode = 0						// default 0, you can choose [SPI_CPOL|SPI_CPHA|SPI_CS_HIGH|SPI_LSB_FIRST]
+	},
+};
+
+static void __init newchip_evm_map_io(void)
 {
 	newchip_map_common_io();
 }
@@ -135,8 +187,8 @@ newchip_evm_map_io(void)
 static __init void newchip_evm_init(void)
 {
 	uart_puts("newchip_evm_init\n");
-	platform_add_devices(newchip_evm_devices,
-			ARRAY_SIZE(newchip_evm_devices));
+	platform_add_devices(newchip_evm_devices, ARRAY_SIZE(newchip_evm_devices));
+    spi_register_board_info(newchip_spi_board_info, ARRAY_SIZE(newchip_spi_board_info));
 }
 
 static __init void newchip_evm_irq_init(void)
