@@ -275,6 +275,11 @@ config SPI_TLE62X0
 #
 # Add new SPI protocol masters in alphabetical order above this line
 #
+config SPI_NEWCHIP
+	tristate "Newchip SPI Controller"
+	depends on ARCH_NEWCHIP && SPI_MASTER
+	help
+	  This selects a driver for the Newchip SPI Controller
 
 endif # SPI_MASTER
 

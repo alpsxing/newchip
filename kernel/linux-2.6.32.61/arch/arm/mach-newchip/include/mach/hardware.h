@@ -40,6 +40,8 @@
 #define CFG_BOOT_MODE (0x90000024)
 
 // Defines for data manipulations
+#define CFG_APB_CLOCK 50000000
+#define CFG_SPI_CLOCK 5000000
 
 // BSPI regs structure
 typedef struct {

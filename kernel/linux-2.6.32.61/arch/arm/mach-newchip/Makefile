@@ -4,7 +4,7 @@
 #
 
 # Common objects
-obj-y 			:= time.o irq.o io.o 
+obj-y 			:= time.o irq.o io.o devices.o
 
 # Board specific
 obj-$(CONFIG_MACH_NEWCHIP_EVM)  += board-evm.o
