@@ -32,8 +32,8 @@
 #include "stmmac.h"
 #include "gmac.h"
 
-#undef GMAC_DEBUG
-/*#define GMAC_DEBUG*/
+//#undef GMAC_DEBUG
+#define GMAC_DEBUG
 #undef FRAME_FILTER_DEBUG
 /*#define FRAME_FILTER_DEBUG*/
 #ifdef GMAC_DEBUG
@@ -431,6 +431,8 @@ static void gmac_get_umac_addr(unsigned long ioaddr, unsigned char *addr,
 
 static void gmac_set_filter(struct net_device *dev)
 {
+
+#if 0 
 	unsigned long ioaddr = dev->base_addr;
 	unsigned int value = 0;
 
@@ -502,6 +504,7 @@ static void gmac_set_filter(struct net_device *dev)
 	    readl(ioaddr + GMAC_HASH_HIGH), readl(ioaddr + GMAC_HASH_LOW));
 
 	return;
+#endif
 }
 
 static void gmac_flow_ctrl(unsigned long ioaddr, unsigned int duplex,

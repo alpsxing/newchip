@@ -45,14 +45,13 @@
 #include <linux/phy.h>
 #include <linux/if_vlan.h>
 #include <linux/dma-mapping.h>
-#include <linux/stm/soc.h>
+//#include <linux/stm/soc.h>
+#include <linux/stmmac_plat.h> 
 #include "stmmac.h"
 
-#define STMMAC_RESOURCE_NAME	"stmmaceth"
-#define PHY_RESOURCE_NAME	"stmmacphy"
-
-#undef STMMAC_DEBUG
-/*#define STMMAC_DEBUG*/
+#define BUS_ID_SIZE		64
+//#undef STMMAC_DEBUG
+#define STMMAC_DEBUG
 #ifdef STMMAC_DEBUG
 #define DBG(nlevel, klevel, fmt, args...) \
 		((void)(netif_msg_##nlevel(priv) && \
@@ -479,7 +478,8 @@ static void init_dma_desc_rings(struct net_device *dev)
 	for (i = 0; i < rxsize; i++) {
 		struct dma_desc *p = priv->dma_rx + i;
 
-		skb = netdev_alloc_skb_ip_align(dev, bfsize);
+		//skb = netdev_alloc_skb_ip_align(dev, bfsize);
+		skb = netdev_alloc_skb(dev, bfsize);
 		if (unlikely(skb == NULL)) {
 			pr_err("%s: Rx init fails; skb is NULL\n", __func__);
 			break;
@@ -1373,8 +1373,8 @@ static inline void stmmac_rx_refill(struct stmmac_priv *priv)
 
 			skb = __skb_dequeue(&priv->rx_recycle);
 			if (skb == NULL)
-				skb = netdev_alloc_skb_ip_align(priv->dev,
-								bfsize);
+				skb = netdev_alloc_skb(priv->dev, bfsize);
+				//skb = netdev_alloc_skb_ip_align(priv->dev, bfsize);
 
 			if (unlikely(skb == NULL))
 				break;
@@ -1885,7 +1885,7 @@ static int stmmac_dvr_probe(struct platform_device *pdev)
 		goto out;
 	}
 	pr_info("done!\n");
-
+/*
 	if (!request_mem_region(res->start, (res->end - res->start),
 				pdev->name)) {
 		pr_err("%s: ERROR: memory allocation failed"
@@ -1894,8 +1894,9 @@ static int stmmac_dvr_probe(struct platform_device *pdev)
 		ret = -EBUSY;
 		goto out;
 	}
-
-	addr = ioremap(res->start, (res->end - res->start));
+*/
+	addr = (unsigned int *)IO_ADDRESS(res->start);
+	//ioremap(res->start, (res->end - res->start));
 	if (!addr) {
 		pr_err("%s: ERROR: memory mapping failed \n", __func__);
 		ret = -ENOMEM;
@@ -1960,18 +1961,18 @@ static int stmmac_dvr_probe(struct platform_device *pdev)
 	       pdev->id, ndev->irq, (unsigned int)addr);
 
 	/* MDIO bus Registration */
-	pr_debug("\tMDIO bus (id: %d)...", priv->bus_id);
+	pr_info("\tMDIO bus (id: %d)...", priv->bus_id);
 	ret = stmmac_mdio_register(ndev);
 	if (ret < 0)
 		goto out;
-	pr_debug("registered!\n");
+	pr_info("registered!\n");
 
 out:
 	if (ret < 0) {
 		platform_set_drvdata(pdev, NULL);
-		release_mem_region(res->start, (res->end - res->start));
-		if (addr != NULL)
-			iounmap(addr);
+//		release_mem_region(res->start, (res->end - res->start));
+//		if (addr != NULL)
+//			iounmap(addr);
 	}
 
 	return ret;
@@ -2004,7 +2005,7 @@ static int stmmac_dvr_remove(struct platform_device *pdev)
 	platform_set_drvdata(pdev, NULL);
 	unregister_netdev(ndev);
 
-	iounmap((void *)ndev->base_addr);
+	//iounmap((void *)ndev->base_addr);
 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	release_mem_region(res->start, (res->end - res->start));
 
