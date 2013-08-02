@@ -47,6 +47,8 @@
 #define DW_IC_SS_SCL_LCNT	0x18
 #define DW_IC_FS_SCL_HCNT	0x1c
 #define DW_IC_FS_SCL_LCNT	0x20
+#define DW_IC_HS_SCL_HCNT	0x24
+#define DW_IC_HS_SCL_LCNT	0x28
 #define DW_IC_INTR_STAT		0x2c
 #define DW_IC_INTR_MASK		0x30
 #define DW_IC_CLR_INTR		0x40
@@ -192,6 +194,11 @@ static void i2c_dw_init(struct dw_i2c_dev *dev)
 	/* Disable the adapter */
 	writeb(0, dev->base + DW_IC_ENABLE);
 
+	writew(0x6, /* fast speed high, 0.6us */
+			dev->base + DW_IC_HS_SCL_HCNT);
+	writew(0x8, /* fast speed low, 1.3us */
+			dev->base + DW_IC_HS_SCL_LCNT);
+#if 0
 	/* set standard and fast speed deviders for high/low periods */
 	writew((input_clock_khz * 40 / 10000)+1, /* std speed high, 4us */
 			dev->base + DW_IC_SS_SCL_HCNT);
@@ -201,7 +208,7 @@ static void i2c_dw_init(struct dw_i2c_dev *dev)
 			dev->base + DW_IC_FS_SCL_HCNT);
 	writew((input_clock_khz * 13 / 10000)+1, /* fast speed low, 1.3us */
 			dev->base + DW_IC_FS_SCL_LCNT);
-
+#endif
 	/* configure the i2c master */
 	ic_con = DW_IC_CON_MASTER | DW_IC_CON_SLAVE_DISABLE |
 		DW_IC_CON_RESTART_EN | DW_IC_CON_SPEED_FAST;
@@ -245,12 +252,16 @@ i2c_dw_xfer_msg(struct i2c_adapter *adap)
 	u16 addr = msgs[dev->msg_write_idx].addr;
 	u16 buf_len = dev->tx_buf_len;
 
+    printk("i2c_dw_xfer_msg\r\n");
+
 	if (!(dev->status & STATUS_WRITE_IN_PROGRESS)) {
 		/* Disable the adapter */
 		writeb(0, dev->base + DW_IC_ENABLE);
 
 		/* set the slave (target) address */
 		writew(msgs[dev->msg_write_idx].addr, dev->base + DW_IC_TAR);
+
+        printk("i2c targe: 0x%04x\r\n", msgs[dev->msg_write_idx].addr);
 
 		/* if the slave address is ten bit address, enable 10BITADDR */
 		ic_con = readw(dev->base + DW_IC_CON);
@@ -263,6 +274,9 @@ i2c_dw_xfer_msg(struct i2c_adapter *adap)
 		/* Enable the adapter */
 		writeb(1, dev->base + DW_IC_ENABLE);
 	}
+
+    printk("i2c data: 0x00\r\n");
+    writew(0x00, dev->base + DW_IC_DATA_CMD);
 
 	for (; dev->msg_write_idx < num; dev->msg_write_idx++) {
 		/* if target address has changed, we need to
@@ -286,12 +300,15 @@ i2c_dw_xfer_msg(struct i2c_adapter *adap)
 		}
 
 		while (buf_len > 0 && tx_limit > 0 && rx_limit > 0) {
+            printk("i2c flags: 0x%04x\r\n", msgs[dev->msg_write_idx].flags);
 			if (msgs[dev->msg_write_idx].flags & I2C_M_RD) {
 				writew(0x100, dev->base + DW_IC_DATA_CMD);
 				rx_limit--;
-			} else
+			} else {
+                printk("i2c data: 0x%02x\r\n", *(dev->tx_buf));
 				writew(*(dev->tx_buf++),
 						dev->base + DW_IC_DATA_CMD);
+            }
 			tx_limit--; buf_len--;
 		}
 	}
@@ -335,8 +352,11 @@ i2c_dw_read(struct i2c_adapter *adap)
 			buf = dev->rx_buf;
 		}
 
-		for (; len > 0 && rx_valid > 0; len--, rx_valid--)
-			*buf++ = readb(dev->base + DW_IC_DATA_CMD);
+		for (; len > 0 && rx_valid > 0; len--, rx_valid--) {
+            *buf = readb(dev->base + DW_IC_DATA_CMD);
+            printk("I2C read: 0x%02x\r\n", *buf);
+			buf++;
+        }
 
 		if (len > 0) {
 			dev->status |= STATUS_READ_IN_PROGRESS;
@@ -422,7 +442,12 @@ done:
 
 static u32 i2c_dw_func(struct i2c_adapter *adap)
 {
-	return I2C_FUNC_I2C | I2C_FUNC_10BIT_ADDR;
+	return I2C_FUNC_I2C |
+		I2C_FUNC_10BIT_ADDR |
+		I2C_FUNC_SMBUS_BYTE |
+		I2C_FUNC_SMBUS_BYTE_DATA |
+		I2C_FUNC_SMBUS_WORD_DATA |
+		I2C_FUNC_SMBUS_I2C_BLOCK;
 }
 
 static void dw_i2c_pump_msg(unsigned long data)
@@ -450,6 +475,7 @@ static irqreturn_t i2c_dw_isr(int this_irq, void *dev_id)
 
 	stat = readw(dev->base + DW_IC_INTR_STAT);
 	dev_dbg(dev->dev, "%s: stat=0x%x\n", __func__, stat);
+    printk("i2c state 0x%02x\r\n", stat);
 	if (stat & DW_IC_INTR_TX_ABRT) {
 		dev->abort_source = readw(dev->base + DW_IC_TX_ABRT_SOURCE);
 		dev->cmd_err |= DW_IC_ERR_TX_ABRT;

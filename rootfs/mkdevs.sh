@@ -69,3 +69,6 @@ mknod mtd2ro c 90 5
 mknod mtd3 c 90 6
 mknod mtd3ro c 90 7
 
+mknod i2c-0 c 89 0
+mknod watchdog c 10 130
+

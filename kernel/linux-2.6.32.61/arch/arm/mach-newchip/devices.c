@@ -48,6 +48,58 @@ static inline void newchip_init_spi(void)
 }
 #endif
 
+#if defined(CONFIG_I2C_DESIGNWARE)
+/*----------------------------------------------------------------------
+ * Device     : I2C resource
+ * Description: tcc8900_i2c_resources has master0 and master1
+ *----------------------------------------------------------------------*/
+static struct resource newchip_i2c_resources[] = {
+	[0] = {
+		.start	= I2C_BASE,			/* I2C master ch0 base address */
+		.end	= I2C_BASE+0xA8,			/* I2C master ch1 base address */
+		.flags	= IORESOURCE_MEM,
+    },
+    [1]={
+		.start = IRQ2_I2C,
+		.end   = IRQ2_I2C,
+		.flags = IORESOURCE_IRQ,
+	}
+};
+
+static struct platform_device newchip_i2c_device = {
+    .name           = "i2c_designware",
+    .id             = 0,
+    .resource       = newchip_i2c_resources,
+    .num_resources  = ARRAY_SIZE(newchip_i2c_resources),
+};
+
+static inline void newchip_init_i2c(void)
+{
+    platform_device_register(&newchip_i2c_device);
+}
+#endif
+
+#ifdef CONFIG_DW_WATCHDOG
+static struct resource newchip_wdt_resources[] = {
+	{
+		.start	= IO_ADDRESS(WDT_BASE),
+		.end	= IO_ADDRESS(WDT_BASE) + 256,
+		.flags	= IORESOURCE_MEM,
+	}
+};
+
+static struct platform_device newchip_wdt_device = {
+	.name		= "dw_wdt",
+	.id		= -1,
+	.resource	= newchip_wdt_resources,
+	.num_resources	= ARRAY_SIZE(newchip_wdt_resources),
+};
+
+static void __init newchip_add_device_watchdog(void)
+{
+	platform_device_register(&newchip_wdt_device);
+}
+#endif
 /*
  * This gets called after board-specific INIT_MACHINE, and initializes most
  * on-chip peripherals accessible on this board (except for few like USB):
@@ -71,8 +123,16 @@ static inline void newchip_init_spi(void)
 static int __init newchip_init_devices(void)
 {
 #if defined(CONFIG_SPI_NEWCHIP)
-    uart_puts("newchip_init_devices\n");
+    uart_puts("newchip_init_spi\n");
 	newchip_init_spi();
+#endif
+#if defined(CONFIG_I2C_DESIGNWARE)
+    uart_puts("newchip_init_i2c\n");
+	newchip_init_i2c();
+#endif
+#if defined(CONFIG_DW_WATCHDOG)
+    uart_puts("newchip_add_device_watchdog\n");
+	newchip_add_device_watchdog();
 #endif
 	return 0;
 }

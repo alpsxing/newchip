@@ -671,6 +671,7 @@ config ARCH_NEWCHIP
 	select GENERIC_CLOCKEVENTS
 	select GENERIC_GPIO
 	select ZONE_DMA
+	select HAVE_CLK
 	help
 	  Support for XXX's NewChip platform.
 

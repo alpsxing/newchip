@@ -281,6 +281,15 @@ config SPI_NEWCHIP
 	help
 	  This selects a driver for the Newchip SPI Controller
 
+config SPI_DESIGNWARE
+        tristate "DesignWare SPI controller core support"
+        help
+          general driver for SPI controller core from DesignWare
+
+config SPI_DW_MMIO
+        tristate "Memory-mapped io interface driver for DW SPI core"
+        depends on SPI_DESIGNWARE && HAVE_CLK
+
 endif # SPI_MASTER
 
 # (slave support would go here)
