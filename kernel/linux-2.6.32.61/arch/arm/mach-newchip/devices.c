@@ -55,8 +55,8 @@ static inline void newchip_init_spi(void)
  *----------------------------------------------------------------------*/
 static struct resource newchip_i2c_resources[] = {
 	[0] = {
-		.start	= I2C_BASE,			/* I2C master ch0 base address */
-		.end	= I2C_BASE+0xA8,			/* I2C master ch1 base address */
+		.start	= IO_ADDRESS(I2C_BASE),			/* I2C master ch0 base address */
+		.end	= IO_ADDRESS(I2C_BASE)+0xA8,			/* I2C master ch1 base address */
 		.flags	= IORESOURCE_MEM,
     },
     [1]={

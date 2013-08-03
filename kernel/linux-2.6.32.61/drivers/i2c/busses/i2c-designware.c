@@ -56,8 +56,10 @@
 #define DW_IC_STATUS		0x70
 #define DW_IC_TXFLR		0x74
 #define DW_IC_RXFLR		0x78
+#define DW_IC_SDA_HOLD  0x7c
 #define DW_IC_COMP_PARAM_1	0xf4
 #define DW_IC_TX_ABRT_SOURCE	0x80
+#define DW_IC_SDA_SETUP 0x94
 
 #define DW_IC_CON_MASTER		0x1
 #define DW_IC_CON_SPEED_STD		0x2
@@ -100,6 +102,8 @@
 #define ABRT_10B_RD_NORSTRT	10
 #define ARB_MASTER_DIS		11
 #define ARB_LOST		12
+
+static volatile int dw_command_width = 2;
 
 static char *abort_sources[] = {
 	[ABRT_7B_ADDR_NOACK]	=
@@ -192,27 +196,31 @@ static void i2c_dw_init(struct dw_i2c_dev *dev)
 	u16 ic_con;
 
 	/* Disable the adapter */
-	writeb(0, dev->base + DW_IC_ENABLE);
+	writel(0, dev->base + DW_IC_ENABLE);
 
-	writew(0x6, /* fast speed high, 0.6us */
+    writel(0x3, dev->base + DW_IC_SDA_HOLD);
+    writel(0x3, dev->base + DW_IC_SDA_SETUP);
+
+	writel(0x6, /* fast speed high, 0.6us */
 			dev->base + DW_IC_HS_SCL_HCNT);
-	writew(0x8, /* fast speed low, 1.3us */
+	writel(0x8, /* fast speed low, 1.3us */
 			dev->base + DW_IC_HS_SCL_LCNT);
+
 #if 0
 	/* set standard and fast speed deviders for high/low periods */
-	writew((input_clock_khz * 40 / 10000)+1, /* std speed high, 4us */
+	writel((input_clock_khz * 40 / 10000)+1, /* std speed high, 4us */
 			dev->base + DW_IC_SS_SCL_HCNT);
-	writew((input_clock_khz * 47 / 10000)+1, /* std speed low, 4.7us */
+	writel((input_clock_khz * 47 / 10000)+1, /* std speed low, 4.7us */
 			dev->base + DW_IC_SS_SCL_LCNT);
-	writew((input_clock_khz *  6 / 10000)+1, /* fast speed high, 0.6us */
+	writel((input_clock_khz *  6 / 10000)+1, /* fast speed high, 0.6us */
 			dev->base + DW_IC_FS_SCL_HCNT);
-	writew((input_clock_khz * 13 / 10000)+1, /* fast speed low, 1.3us */
+	writel((input_clock_khz * 13 / 10000)+1, /* fast speed low, 1.3us */
 			dev->base + DW_IC_FS_SCL_LCNT);
 #endif
 	/* configure the i2c master */
 	ic_con = DW_IC_CON_MASTER | DW_IC_CON_SLAVE_DISABLE |
 		DW_IC_CON_RESTART_EN | DW_IC_CON_SPEED_FAST;
-	writew(ic_con, dev->base + DW_IC_CON);
+	writel(ic_con, dev->base + DW_IC_CON);
 }
 
 /*
@@ -222,7 +230,7 @@ static int i2c_dw_wait_bus_not_busy(struct dw_i2c_dev *dev)
 {
 	int timeout = TIMEOUT;
 
-	while (readb(dev->base + DW_IC_STATUS) & DW_IC_STATUS_ACTIVITY) {
+	while (readl(dev->base + DW_IC_STATUS) & DW_IC_STATUS_ACTIVITY) {
 		if (timeout <= 0) {
 			dev_warn(dev->dev, "timeout waiting for bus ready\n");
 			return -ETIMEDOUT;
@@ -234,6 +242,7 @@ static int i2c_dw_wait_bus_not_busy(struct dw_i2c_dev *dev)
 	return 0;
 }
 
+static void dw_i2c_test(struct dw_i2c_dev *dev);
 /*
  * Initiate low level master read/write transaction.
  * This function is called from i2c_dw_xfer when starting a transfer.
@@ -247,36 +256,37 @@ i2c_dw_xfer_msg(struct i2c_adapter *adap)
 	struct i2c_msg *msgs = dev->msgs;
 	int num = dev->msgs_num;
 	u16 ic_con, intr_mask;
-	int tx_limit = dev->tx_fifo_depth - readb(dev->base + DW_IC_TXFLR);
-	int rx_limit = dev->rx_fifo_depth - readb(dev->base + DW_IC_RXFLR);
+	int tx_limit = dev->tx_fifo_depth - readl(dev->base + DW_IC_TXFLR);
+	int rx_limit = dev->rx_fifo_depth - readl(dev->base + DW_IC_RXFLR);
 	u16 addr = msgs[dev->msg_write_idx].addr;
 	u16 buf_len = dev->tx_buf_len;
-
-    printk("i2c_dw_xfer_msg\r\n");
+    u32  txbuf[128];
+    int txidx = 0;
+    int i;
 
 	if (!(dev->status & STATUS_WRITE_IN_PROGRESS)) {
 		/* Disable the adapter */
-		writeb(0, dev->base + DW_IC_ENABLE);
+		writel(0, dev->base + DW_IC_ENABLE);
 
 		/* set the slave (target) address */
-		writew(msgs[dev->msg_write_idx].addr, dev->base + DW_IC_TAR);
-
-        printk("i2c targe: 0x%04x\r\n", msgs[dev->msg_write_idx].addr);
+		writel(msgs[dev->msg_write_idx].addr, dev->base + DW_IC_TAR);
 
 		/* if the slave address is ten bit address, enable 10BITADDR */
-		ic_con = readw(dev->base + DW_IC_CON);
+		ic_con = readl(dev->base + DW_IC_CON);
 		if (msgs[dev->msg_write_idx].flags & I2C_M_TEN)
 			ic_con |= DW_IC_CON_10BITADDR_MASTER;
 		else
 			ic_con &= ~DW_IC_CON_10BITADDR_MASTER;
-		writew(ic_con, dev->base + DW_IC_CON);
+		writel(ic_con, dev->base + DW_IC_CON);
 
 		/* Enable the adapter */
-		writeb(1, dev->base + DW_IC_ENABLE);
+		writel(1, dev->base + DW_IC_ENABLE);
 	}
 
-    printk("i2c data: 0x00\r\n");
-    writew(0x00, dev->base + DW_IC_DATA_CMD);
+    if(dw_command_width == 2) {
+        txbuf[txidx] = 0x00;
+        txidx ++;
+    }
 
 	for (; dev->msg_write_idx < num; dev->msg_write_idx++) {
 		/* if target address has changed, we need to
@@ -300,18 +310,26 @@ i2c_dw_xfer_msg(struct i2c_adapter *adap)
 		}
 
 		while (buf_len > 0 && tx_limit > 0 && rx_limit > 0) {
-            printk("i2c flags: 0x%04x\r\n", msgs[dev->msg_write_idx].flags);
 			if (msgs[dev->msg_write_idx].flags & I2C_M_RD) {
-				writew(0x100, dev->base + DW_IC_DATA_CMD);
+				//writel(0x100, dev->base + DW_IC_DATA_CMD);
+                txbuf[txidx] = 0x100;
+                txidx ++;
 				rx_limit--;
 			} else {
-                printk("i2c data: 0x%02x\r\n", *(dev->tx_buf));
-				writew(*(dev->tx_buf++),
-						dev->base + DW_IC_DATA_CMD);
+                txbuf[txidx] = *(dev->tx_buf);
+                txidx ++;
+                //printk("i2c data: 0x%02x\r\n", *(dev->tx_buf));
+				//writel(*(dev->tx_buf),
+				//		dev->base + DW_IC_DATA_CMD);
+                dev->tx_buf++;
             }
 			tx_limit--; buf_len--;
 		}
 	}
+
+    for(i = 0; i < txidx; i ++) {
+    	writel(txbuf[i], dev->base + DW_IC_DATA_CMD);
+    }
 
 	intr_mask = DW_IC_INTR_STOP_DET | DW_IC_INTR_TX_ABRT;
 	if (buf_len > 0) { /* more bytes to be written */
@@ -319,7 +337,7 @@ i2c_dw_xfer_msg(struct i2c_adapter *adap)
 		dev->status |= STATUS_WRITE_IN_PROGRESS;
 	} else
 		dev->status &= ~STATUS_WRITE_IN_PROGRESS;
-	writew(intr_mask, dev->base + DW_IC_INTR_MASK);
+	writel(intr_mask, dev->base + DW_IC_INTR_MASK);
 
 	dev->tx_buf_len = buf_len;
 }
@@ -331,7 +349,7 @@ i2c_dw_read(struct i2c_adapter *adap)
 	struct i2c_msg *msgs = dev->msgs;
 	int num = dev->msgs_num;
 	u16 addr = msgs[dev->msg_read_idx].addr;
-	int rx_valid = readw(dev->base + DW_IC_RXFLR);
+	int rx_valid = readl(dev->base + DW_IC_RXFLR);
 
 	for (; dev->msg_read_idx < num; dev->msg_read_idx++) {
 		u16 len;
@@ -353,9 +371,8 @@ i2c_dw_read(struct i2c_adapter *adap)
 		}
 
 		for (; len > 0 && rx_valid > 0; len--, rx_valid--) {
-            *buf = readb(dev->base + DW_IC_DATA_CMD);
-            printk("I2C read: 0x%02x\r\n", *buf);
-			buf++;
+            unsigned int readvalue = readl(dev->base + DW_IC_DATA_CMD);
+			*buf = (unsigned char)readvalue;
         }
 
 		if (len > 0) {
@@ -418,7 +435,7 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
 		do {
 			i2c_dw_read(adap);
 		} while (dev->status & STATUS_READ_IN_PROGRESS);
-		writeb(0, dev->base + DW_IC_ENABLE);
+		writel(0, dev->base + DW_IC_ENABLE);
 		ret = num;
 		goto done;
 	}
@@ -461,8 +478,11 @@ static void dw_i2c_pump_msg(unsigned long data)
 	intr_mask = DW_IC_INTR_STOP_DET | DW_IC_INTR_TX_ABRT;
 	if (dev->status & STATUS_WRITE_IN_PROGRESS)
 		intr_mask |= DW_IC_INTR_TX_EMPTY;
-	writew(intr_mask, dev->base + DW_IC_INTR_MASK);
+	writel(intr_mask, dev->base + DW_IC_INTR_MASK);
 }
+
+static volatile int test_flag = 0;
+static volatile int data_read = 0;
 
 /*
  * Interrupt service routine. This gets called whenever an I2C interrupt
@@ -471,20 +491,29 @@ static void dw_i2c_pump_msg(unsigned long data)
 static irqreturn_t i2c_dw_isr(int this_irq, void *dev_id)
 {
 	struct dw_i2c_dev *dev = dev_id;
-	u16 stat;
+	u32 stat = 0;
 
-	stat = readw(dev->base + DW_IC_INTR_STAT);
-	dev_dbg(dev->dev, "%s: stat=0x%x\n", __func__, stat);
-    printk("i2c state 0x%02x\r\n", stat);
+    if(test_flag) {
+        unsigned int stat = readl(dev->base + DW_IC_INTR_STAT);
+        if((stat & 0x200) == 0x200) {
+            printk("i2c test isr stat 0x%08x\r\n", stat);
+            data_read = 1;
+        }
+        writel(0x00, dev->base + DW_IC_INTR_MASK);
+        return IRQ_HANDLED;
+    }
+
+	stat = readl(dev->base + DW_IC_INTR_STAT);
+	dev_dbg(dev->dev, "%s: stat=0x%08x\n", __func__, stat);
 	if (stat & DW_IC_INTR_TX_ABRT) {
-		dev->abort_source = readw(dev->base + DW_IC_TX_ABRT_SOURCE);
+		dev->abort_source = readl(dev->base + DW_IC_TX_ABRT_SOURCE);
 		dev->cmd_err |= DW_IC_ERR_TX_ABRT;
 		dev->status = STATUS_IDLE;
 	} else if (stat & DW_IC_INTR_TX_EMPTY)
 		tasklet_schedule(&dev->pump_msg);
 
-	readb(dev->base + DW_IC_CLR_INTR);	/* clear interrupts */
-	writew(0, dev->base + DW_IC_INTR_MASK);	/* disable interrupts */
+	readl(dev->base + DW_IC_CLR_INTR);	/* clear interrupts */
+	writel(0, dev->base + DW_IC_INTR_MASK);	/* disable interrupts */
 	if (stat & (DW_IC_INTR_TX_ABRT | DW_IC_INTR_STOP_DET))
 		complete(&dev->cmd_complete);
 
@@ -495,6 +524,45 @@ static struct i2c_algorithm i2c_dw_algo = {
 	.master_xfer	= i2c_dw_xfer,
 	.functionality	= i2c_dw_func,
 };
+
+static void dw_i2c_test(struct dw_i2c_dev *dev)
+{
+    unsigned int read_data = 0;
+    test_flag = 1;
+    writel(0x00, dev->base + DW_IC_ENABLE);
+    writel(0x50, dev->base + DW_IC_TAR);
+    writel(0x01, dev->base + DW_IC_ENABLE);
+
+    printk("i2c test begin write.\r\n");
+    writel(0x00, dev->base + DW_IC_DATA_CMD);
+    writel(0x5A, dev->base + DW_IC_DATA_CMD);
+    writel(0xAA, dev->base + DW_IC_DATA_CMD);
+
+    data_read = 0;
+    writel(0x200, dev->base + DW_IC_INTR_MASK);
+
+    while(data_read == 0) {
+        ;
+    }
+
+
+    printk("i2c test begin read.\r\n");
+    writel(0x00, dev->base + DW_IC_DATA_CMD);
+    writel(0x5A, dev->base + DW_IC_DATA_CMD);
+    writel(0x100, dev->base + DW_IC_DATA_CMD);
+
+    data_read = 0;
+    writel(0x200, dev->base + DW_IC_INTR_MASK);
+
+    while(data_read == 0) {
+        ;
+    }
+
+    read_data = readl(dev->base + DW_IC_DATA_CMD);
+    printk("i2c test read data: 0x%08x\r\n", read_data);
+
+    test_flag = 0;
+}
 
 static int __devinit dw_i2c_probe(struct platform_device *pdev)
 {
@@ -515,14 +583,14 @@ static int __devinit dw_i2c_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "no irq resource?\n");
 		return -EINVAL;
 	}
-
+/*
 	ioarea = request_mem_region(mem->start, resource_size(mem),
 			pdev->name);
 	if (!ioarea) {
 		dev_err(&pdev->dev, "I2C region already claimed\n");
 		return -EBUSY;
 	}
-
+*/
 	dev = kzalloc(sizeof(struct dw_i2c_dev), GFP_KERNEL);
 	if (!dev) {
 		r = -ENOMEM;
@@ -543,7 +611,8 @@ static int __devinit dw_i2c_probe(struct platform_device *pdev)
 	}
 	clk_enable(dev->clk);
 
-	dev->base = ioremap(mem->start, resource_size(mem));
+    dev->base = mem->start;
+	//dev->base = ioremap(mem->start, resource_size(mem));
 	if (dev->base == NULL) {
 		dev_err(&pdev->dev, "failure mapping io resources\n");
 		r = -EBUSY;
@@ -557,7 +626,7 @@ static int __devinit dw_i2c_probe(struct platform_device *pdev)
 	}
 	i2c_dw_init(dev);
 
-	writew(0, dev->base + DW_IC_INTR_MASK); /* disable IRQ */
+	writel(0, dev->base + DW_IC_INTR_MASK); /* disable IRQ */
 	r = request_irq(dev->irq, i2c_dw_isr, 0, pdev->name, dev);
 	if (r) {
 		dev_err(&pdev->dev, "failure requesting irq %i\n", dev->irq);
@@ -579,6 +648,8 @@ static int __devinit dw_i2c_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "failure adding adapter\n");
 		goto err_free_irq;
 	}
+
+    //dw_i2c_test(dev);
 
 	return 0;
 
@@ -613,7 +684,7 @@ static int __devexit dw_i2c_remove(struct platform_device *pdev)
 	clk_put(dev->clk);
 	dev->clk = NULL;
 
-	writeb(0, dev->base + DW_IC_ENABLE);
+	writel(0, dev->base + DW_IC_ENABLE);
 	free_irq(dev->irq, dev);
 	kfree(dev);
 
