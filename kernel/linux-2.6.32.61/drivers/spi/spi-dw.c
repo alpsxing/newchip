@@ -209,8 +209,9 @@ static void dw_writer(struct dw_spi *dws)
 	while (max--) {
 		/* Set the tx word if the transfer's original "tx" is not null */
 		if (dws->tx_end - dws->len) {
-			if (dws->n_bytes == 1)
-				txw = *(u8 *)(dws->tx);
+			if (dws->n_bytes == 1) {
+				txw = ((*(u8 *)(dws->tx)) << 8);
+            }
 			else
 				txw = *(u16 *)(dws->tx);
 		}
@@ -511,6 +512,7 @@ static void pump_transfers(unsigned long data)
 
 	/* Check if current transfer is a DMA transaction */
 	dws->dma_mapped = map_dma_buffers(dws);
+    printk("dma_mapped %d.\r\n", dws->dma_mapped);
 
 	/*
 	 * Interrupt mode
@@ -609,6 +611,8 @@ static int dw_spi_transfer(struct spi_device *spi, struct spi_message *msg)
 	struct dw_spi *dws = spi_master_get_devdata(spi->master);
 	unsigned long flags;
 
+    printk("dw_spi_transfer.\r\n");
+
 	spin_lock_irqsave(&dws->lock, flags);
 
 	if (dws->run == QUEUE_STOPPED) {
@@ -675,6 +679,8 @@ static int dw_spi_setup(struct spi_device *spi)
 
 		chip->enable_dma = chip_info->enable_dma;
 	}
+
+    printk("Poll mode: %d.\r\n", chip->poll_mode);
 
 	if (spi->bits_per_word <= 8) {
 		chip->n_bytes = 1;

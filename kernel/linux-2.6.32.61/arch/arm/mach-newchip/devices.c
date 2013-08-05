@@ -42,9 +42,31 @@ static struct platform_device newchip_spi0_device = {
     .num_resources	= ARRAY_SIZE(spi0_resources),
 };
 
+static struct resource spi1_resources[] = {
+    [0] = {
+		.start = IO_ADDRESS(SSI_BASE),
+		.end   = IO_ADDRESS(SSI_BASE) + 120,
+		.flags = IORESOURCE_MEM,
+    },
+    [1]={
+		.start = IRQ11_SSI,
+		.end   = IRQ11_SSI,
+		.flags = IORESOURCE_IRQ,
+	}
+};
+
+static struct platform_device newchip_spi1_device = {
+    .name			= "dw_spi_mmio",
+    .id				= 1,
+    .resource		= spi1_resources,
+    .num_resources	= ARRAY_SIZE(spi1_resources),
+};
+
+
 static inline void newchip_init_spi(void)
 {
 	platform_device_register(&newchip_spi0_device);
+	platform_device_register(&newchip_spi1_device);
 }
 #endif
 

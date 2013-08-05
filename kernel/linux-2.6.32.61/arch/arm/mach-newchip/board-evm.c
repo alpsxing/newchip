@@ -148,12 +148,12 @@ static struct mtd_partition newchip_M25P28_partitions[] = {
 	{
 		.name		= "kernel",
 		.offset		= SZ_2M,
-		.size		= SZ_4M,
+		.size		= SZ_8M,
 		.mask_flags	= 0,
 	},
 	{
 		.name		= "data",
-		.offset		= SZ_2M + SZ_4M,
+		.offset		= SZ_2M + SZ_8M,
 		.size		= SZ_1M,
 		.mask_flags	= 0,
 	}
@@ -166,14 +166,38 @@ static struct flash_platform_data newchip_M25P28_info = {
 	.type = "m25p128"
 };
 
+static struct mtd_partition newchip_legacy_M25P28_partitions[] = {
+	{
+		.name		= "data",
+		.offset		= 0,
+		.size		= SZ_1M,
+		.mask_flags	= 0,
+	}
+};
+
+static struct flash_platform_data newchip_legacy_M25P28_info = {
+	.name = "m25p128_legacy",
+	.parts = newchip_legacy_M25P28_partitions,
+	.nr_parts = ARRAY_SIZE(newchip_legacy_M25P28_partitions),
+	.type = "m25p128"
+};
 
 static struct spi_board_info newchip_spi_board_info[] = {
-	{
+	[0] = {
 		.modalias = "m25p128",
 		.bus_num = 0,					// spi channel 0
 		.chip_select = 0,
 
 		.platform_data = &newchip_M25P28_info,
+		.max_speed_hz = 20*1000*1000,	// default 2Mhz
+		.mode = 0						// default 0, you can choose [SPI_CPOL|SPI_CPHA|SPI_CS_HIGH|SPI_LSB_FIRST]
+	},
+	[1] = {
+		.modalias = "m25p80_legacy",
+		.bus_num = 1,					// spi channel 0
+		.chip_select = 0,
+
+		.platform_data = &newchip_legacy_M25P28_info,
 		.max_speed_hz = 20*1000*1000,	// default 2Mhz
 		.mode = 0						// default 0, you can choose [SPI_CPOL|SPI_CPHA|SPI_CS_HIGH|SPI_LSB_FIRST]
 	},

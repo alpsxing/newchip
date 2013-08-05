@@ -312,7 +312,7 @@ static int __init newchip_spi_probe(struct platform_device *pdev)
 	struct newchip_spi	*ns;
     int clk_div_rate;
 
-    printk("Newchip SPI Probe");
+    printk("Newchip SPI Probe\r\n");
 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	if (!regs)
 		return -ENXIO;
@@ -392,7 +392,7 @@ static struct platform_driver newchip_spi_driver = {
 
 static int __init newchip_spi_init(void)
 {
-        printk("Newchip SPI Init");
+    printk("Newchip SPI Init\r\n");
 	return platform_driver_probe(&newchip_spi_driver, newchip_spi_probe);
 }
 module_init(newchip_spi_init);

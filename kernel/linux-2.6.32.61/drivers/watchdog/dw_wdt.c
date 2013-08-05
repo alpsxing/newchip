@@ -37,10 +37,12 @@
 #include <linux/watchdog.h>
 
 #define WDOG_CONTROL_REG_OFFSET		    0x00
-#define WDOG_CONTROL_REG_WDT_EN_MASK	    0x01
+#define WDOG_CONTROL_REG_WDT_EN_MASK	    0x03
 #define WDOG_TIMEOUT_RANGE_REG_OFFSET	    0x04
 #define WDOG_CURRENT_COUNT_REG_OFFSET	    0x08
 #define WDOG_COUNTER_RESTART_REG_OFFSET     0x0c
+#define WDOG_VERSION_REG_OFFSET             0xF8
+#define WDOG_TYPE_REG_OFFSET                0xFC
 #define WDOG_COUNTER_RESTART_KICK_VALUE	    0x76
 
 /* The maximum TOP (timeout period) value that can be set in the watchdog. */
@@ -69,6 +71,18 @@ static inline int dw_wdt_is_enabled(void)
 		WDOG_CONTROL_REG_WDT_EN_MASK;
 }
 
+static inline void dw_wdt_enable(void)
+{
+    writel(WDOG_CONTROL_REG_WDT_EN_MASK,
+		       dw_wdt.regs + WDOG_CONTROL_REG_OFFSET);
+}
+
+static inline void dw_wdt_disable(void)
+{
+    writel(0,
+		       dw_wdt.regs + WDOG_CONTROL_REG_OFFSET);
+}
+
 static inline int dw_wdt_top_in_seconds(unsigned top)
 {
 	/*
@@ -88,6 +102,37 @@ static int dw_wdt_get_top(void)
 static inline void dw_wdt_set_next_heartbeat(void)
 {
 	dw_wdt.next_heartbeat = jiffies + dw_wdt_get_top() * HZ;
+}
+
+static void test_wdt()
+{
+    unsigned int readval;
+    int i;
+    readval = readl(dw_wdt.regs + WDOG_TYPE_REG_OFFSET);
+    printk("Type: 0x%08x\r\n", readval);
+    readval = readl(dw_wdt.regs + WDOG_VERSION_REG_OFFSET);
+    printk("Version: 0x%08x\r\n", readval);
+
+    writel(15, dw_wdt.regs + WDOG_TIMEOUT_RANGE_REG_OFFSET);
+    readval = readl(dw_wdt.regs + WDOG_TIMEOUT_RANGE_REG_OFFSET);
+    printk("Timeout range: 0x%08x\r\n", readval);
+
+    writel(0x3, dw_wdt.regs + WDOG_CONTROL_REG_OFFSET);
+    readval = readl(dw_wdt.regs + WDOG_CONTROL_REG_OFFSET);
+    printk("Control: 0x%08x\r\n", readval);
+
+    writel(0x76, dw_wdt.regs + WDOG_COUNTER_RESTART_REG_OFFSET);
+
+    readval = readl(dw_wdt.regs + WDOG_CURRENT_COUNT_REG_OFFSET);
+    printk("Counter: 0x%08x\r\n", readval);
+
+    for(i = 0; i < 20; i ++) {
+        readl(dw_wdt.regs + WDOG_TYPE_REG_OFFSET);
+    }
+
+    readval = readl(dw_wdt.regs + WDOG_CURRENT_COUNT_REG_OFFSET);
+    printk("Counter: 0x%08x\r\n", readval);
+
 }
 
 static int dw_wdt_set_top(unsigned top_s)
@@ -120,20 +165,21 @@ static void dw_wdt_keepalive(void)
 
 static void dw_wdt_ping(unsigned long data)
 {
+/*
 	if (time_before(jiffies, dw_wdt.next_heartbeat) ||
 	    (!nowayout && !dw_wdt.in_use)) {
 		dw_wdt_keepalive();
 		mod_timer(&dw_wdt.timer, jiffies + WDT_TIMEOUT);
 	} else
 		pr_crit("keepalive missed, machine will reset\n");
+*/
+    return; // Do nothing
 }
 
 static int dw_wdt_open(struct inode *inode, struct file *filp)
 {
 	if (test_and_set_bit(0, &dw_wdt.in_use))
 		return -EBUSY;
-
-    printk("");
 
 	/* Make sure we don't get unloaded. */
 	__module_get(THIS_MODULE);
@@ -144,16 +190,22 @@ static int dw_wdt_open(struct inode *inode, struct file *filp)
 		 * The watchdog is not currently enabled. Set the timeout to
 		 * the maximum and then start it.
 		 */
-		dw_wdt_set_top(DW_WDT_MAX_TOP);
-		writel(WDOG_CONTROL_REG_WDT_EN_MASK,
-		       dw_wdt.regs + WDOG_CONTROL_REG_OFFSET);
+		dw_wdt_set_top(0xFFFFFF);
+		dw_wdt_enable();
 	}
 
 	dw_wdt_set_next_heartbeat();
-
 	spin_unlock(&dw_wdt.lock);
 
 	return nonseekable_open(inode, filp);
+}
+
+
+static u32 dw_wdt_time_left(void)
+{
+    u32 timeleft = readl(dw_wdt.regs + WDOG_CURRENT_COUNT_REG_OFFSET);
+	return timeleft /
+		clk_get_rate(dw_wdt.clk);
 }
 
 ssize_t dw_wdt_write(struct file *filp, const char __user *buf, size_t len,
@@ -186,13 +238,6 @@ ssize_t dw_wdt_write(struct file *filp, const char __user *buf, size_t len,
 	return len;
 }
 
-static u32 dw_wdt_time_left(void)
-{
-    u32 timeleft = readl(dw_wdt.regs + WDOG_CURRENT_COUNT_REG_OFFSET);
-    printk("wdt time left 0x%08x\r\n", timeleft);
-	return timeleft /
-		clk_get_rate(dw_wdt.clk);
-}
 
 static const struct watchdog_info dw_wdt_ident = {
 	.options	= WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT |
@@ -215,6 +260,7 @@ static long dw_wdt_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		return put_user(0, (int *)arg);
 
 	case WDIOC_KEEPALIVE:
+        dw_wdt_keepalive();
 		dw_wdt_set_next_heartbeat();
 		return 0;
 
@@ -225,13 +271,12 @@ static long dw_wdt_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 		return put_user(timeout , (int __user *)arg);
 
 	case WDIOC_GETTIMEOUT:
-		return put_user(dw_wdt_get_top(), (int __user *)arg);
+        timeout = dw_wdt_get_top();
+		return put_user(timeout, (int __user *)arg);
 
 	case WDIOC_GETTIMELEFT:
-		/* Get the time left until expiry. */
-		if (get_user(val, (int __user *)arg))
-			return -EFAULT;
-		return put_user(dw_wdt_time_left(), (int __user *)arg);
+        timeout = dw_wdt_time_left();
+		return put_user(timeout, (int __user *)arg);
 
 	default:
 		return -ENOTTY;
@@ -250,6 +295,9 @@ static int dw_wdt_release(struct inode *inode, struct file *filp)
 		else
 			pr_crit("watchdog cannot be disabled, system will reboot soon\n");
 	}
+    else {
+        pr_crit("watchdog cannot be disabled, system will reboot soon\n");
+    }
 
 	dw_wdt.expect_close = 0;
 
@@ -305,7 +353,7 @@ static int __devinit dw_wdt_drv_probe(struct platform_device *pdev)
 	if (!mem)
 		return -EINVAL;
 
-	dw_wdt.regs = mem; //ioremap(mem, resource_size(mem));
+	dw_wdt.regs = mem->start; //ioremap(mem, resource_size(mem));
 	if (!dw_wdt.regs)
 		return -ENOMEM;
 
@@ -322,6 +370,8 @@ static int __devinit dw_wdt_drv_probe(struct platform_device *pdev)
 	ret = misc_register(&dw_wdt_miscdev);
 	if (ret)
 		goto out_disable_clk;
+
+    //test_wdt();
 
 	dw_wdt_set_next_heartbeat();
 	setup_timer(&dw_wdt.timer, dw_wdt_ping, 0);

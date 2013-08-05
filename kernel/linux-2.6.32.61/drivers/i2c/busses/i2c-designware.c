@@ -103,7 +103,7 @@
 #define ARB_MASTER_DIS		11
 #define ARB_LOST		12
 
-static volatile int dw_command_width = 2;
+static volatile int dw_command_width = 1;
 
 static char *abort_sources[] = {
 	[ABRT_7B_ADDR_NOACK]	=
@@ -326,7 +326,11 @@ i2c_dw_xfer_msg(struct i2c_adapter *adap)
 			tx_limit--; buf_len--;
 		}
 	}
-
+/*
+    for(i = 0; i < txidx; i ++) {
+    	printk("Value 0x%02x\r\n", txbuf[i]);
+    }
+*/
     for(i = 0; i < txidx; i ++) {
     	writel(txbuf[i], dev->base + DW_IC_DATA_CMD);
     }

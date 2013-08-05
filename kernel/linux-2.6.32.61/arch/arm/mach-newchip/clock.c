@@ -28,7 +28,12 @@ static struct clk i2cclock = {
 
 static struct clk wdtclock = {
 	.name		= "dw_wdt",
-	.rate	= 1
+	.rate	= 50000000
+};
+
+static struct clk spiclock = {
+	.name		= "dw_spi",
+	.rate	= 5000000
 };
 
 /* clocks cannot be de-registered no refcounting necessary */
@@ -42,6 +47,10 @@ struct clk *clk_get(struct device *dev, const char *id)
     else if(!strcmp(dev_name(dev), "dw_wdt")) {
         printk("Return wdtclock\r\n");
         return &wdtclock;
+    }
+    else if(!strcmp(dev_name(dev), "dw_spi_mmio.1")) {
+        printk("Return spiclock\r\n");
+        return &spiclock;
     }
 
     return NULL;
@@ -70,7 +79,6 @@ unsigned long clk_get_rate(struct clk *clk)
 	if (clk == NULL || IS_ERR(clk))
 		return -EINVAL;
 
-    printk("Clock %s rate: %lu\r\n", clk->name, clk->rate);
 	return clk->rate;
 }
 EXPORT_SYMBOL(clk_get_rate);
