@@ -1,8 +1,8 @@
 VERSION = 2
 PATCHLEVEL = 6
-SUBLEVEL = 32
-EXTRAVERSION = .61
-NAME = Man-Eating Seals of Antiquity
+SUBLEVEL = 24
+EXTRAVERSION = 
+NAME = Newchip
 
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
