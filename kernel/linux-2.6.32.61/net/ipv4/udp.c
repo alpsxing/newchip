@@ -540,18 +540,18 @@ static int udp_push_pending_frames(struct sock *sk)
 	if (is_udplite)  				 /*     UDP-Lite      */
 		csum  = udplite_csum_outgoing(sk, skb);
 
-	else if (sk->sk_no_check == UDP_CSUM_NOXMIT) {   /* UDP csum disabled */
-
+else //if (sk->sk_no_check == UDP_CSUM_NOXMIT) {   /* UDP csum disabled */
+    {
 		skb->ip_summed = CHECKSUM_NONE;
 		goto send;
 
-	} else if (skb->ip_summed == CHECKSUM_PARTIAL) { /* UDP hardware csum */
+	} //else if (skb->ip_summed == CHECKSUM_PARTIAL) { /* UDP hardware csum */
 
-		udp4_hwcsum_outgoing(sk, skb, fl->fl4_src, fl->fl4_dst, up->len);
-		goto send;
+		//udp4_hwcsum_outgoing(sk, skb, fl->fl4_src, fl->fl4_dst, up->len);
+		//goto send;
 
-	} else						 /*   `normal' UDP    */
-		csum = udp_csum_outgoing(sk, skb);
+	//} else						 /*   `normal' UDP    */
+		//csum = udp_csum_outgoing(sk, skb);/
 
 	/* add protocol-dependent pseudo-header */
 	uh->check = csum_tcpudp_magic(fl->fl4_src, fl->fl4_dst, up->len,
