@@ -25,7 +25,7 @@
 #include <linux/slab.h>
 #include <linux/spi/spi.h>
 
-#include "spi-dw.h"
+#include <linux/spi/spi-dw.h>
 
 #ifdef CONFIG_DEBUG_FS
 #include <linux/debugfs.h>

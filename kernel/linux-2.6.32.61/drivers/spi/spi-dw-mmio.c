@@ -17,7 +17,7 @@
 #include <linux/scatterlist.h>
 #include <linux/module.h>
 
-#include "spi-dw.h"
+#include <linux/spi/spi-dw.h>
 
 #define DRIVER_NAME "dw_spi_mmio"
 
