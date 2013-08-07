@@ -191,8 +191,7 @@ static int newchip_m25p80_write(struct mtd_info *mtd, loff_t to, size_t len,
 	size_t *retlen, const u_char *buf)
 {
 	struct m25p *flash = mtd_to_m25p(mtd);
-    size_t erase_len = len;
-    u32 addr = to;
+	u32 page_offset, page_size;
 
 	DEBUG(MTD_DEBUG_LEVEL2, "%s %s 0x%08x, len %zd\n",
 			__func__, "to",
@@ -210,14 +209,30 @@ static int newchip_m25p80_write(struct mtd_info *mtd, loff_t to, size_t len,
 
 	mutex_lock(&flash->lock);
 
-	while (erase_len) {
-		newchip_spi_erase(flash->spi, flash->erase_opcode, addr);
+    /* what page do we start with? */
+    page_offset = to % FLASH_PAGESIZE;
 
-		addr += mtd->erasesize;
-		erase_len -= mtd->erasesize;
-	}
+    /* do all the bytes fit onto one page? */
+    if (page_offset + len <= FLASH_PAGESIZE) {
+        newchip_spi_write_block(flash->spi, to, (unsigned int *)buf, len);
+    } else {
+	    u32 i;
 
-    newchip_spi_write_block(flash->spi, to, (unsigned int *)buf, len);
+	    /* the size of data remaining on the first page */
+	    page_size = FLASH_PAGESIZE - page_offset;
+
+        newchip_spi_write_block(flash->spi, to, (unsigned int *)buf, page_size);
+
+	    /* write everything in PAGESIZE chunks */
+	    for (i = page_size; i < len; i += page_size) {
+		    page_size = len - i;
+		    if (page_size > FLASH_PAGESIZE)
+			    page_size = FLASH_PAGESIZE;
+
+            newchip_spi_write_block(flash->spi, to+i, (unsigned int *)(buf+i), page_size);
+	    }
+    }
+
 
 	if (retlen)
         *retlen = len;

@@ -51,6 +51,9 @@
 	_min1 < _min2 ? (_min1 < _min3 ? _min1 : _min3) : \
 		(_min2 < _min3 ? _min2 : _min3); })
 
+static u8 *spi_tx_buffer = NULL;
+static u8 *spi_rx_buffer = NULL;
+
 /* Slave spi_dev related */
 struct chip_data {
 	u16 cr0;
@@ -210,7 +213,7 @@ static void dw_writer(struct dw_spi *dws)
 		/* Set the tx word if the transfer's original "tx" is not null */
 		if (dws->tx_end - dws->len) {
 			if (dws->n_bytes == 1) {
-				txw = ((*(u8 *)(dws->tx)) << 8);
+				txw = *(u8 *)(dws->tx);
             }
 			else
 				txw = *(u16 *)(dws->tx);
@@ -377,9 +380,159 @@ static irqreturn_t dw_spi_irq(int irq, void *dev_id)
 	return dws->transfer_handler(dws);
 }
 
+static void test_transfer(struct dw_spi *dws)
+{
+    unsigned short rd_data;
+    dw_writew(dws, DW_SPI_DR, 0x9F);
+    dw_writew(dws, DW_SPI_DR, 0x00);
+    dw_writew(dws, DW_SPI_DR, 0x00);
+    dw_writew(dws, DW_SPI_DR, 0x00);
+    dw_writew(dws, DW_SPI_DR, 0x00);
+    dw_writew(dws, DW_SPI_DR, 0x00);
+
+    rd_data = dw_readw(dws, DW_SPI_SR);
+    while(rd_data & 0x01) {
+        rd_data = dw_readw(dws, DW_SPI_SR);
+    }
+
+    rd_data = dw_readw(dws, DW_SPI_DR);
+    printk("Read data 0x%04x\r\n", rd_data);
+
+    rd_data = dw_readw(dws, DW_SPI_DR);
+    printk("Read data 0x%04x\r\n", rd_data);
+
+    rd_data = dw_readw(dws, DW_SPI_DR);
+    printk("Read data 0x%04x\r\n", rd_data);
+
+    rd_data = dw_readw(dws, DW_SPI_DR);
+    printk("Read data 0x%04x\r\n", rd_data);
+
+    rd_data = dw_readw(dws, DW_SPI_DR);
+    printk("Read data 0x%04x\r\n", rd_data);
+
+    rd_data = dw_readw(dws, DW_SPI_DR);
+    printk("Read data 0x%04x\r\n", rd_data);
+
+}
+#if 1
 /* Must be called inside pump_transfers() */
 static void poll_transfer(struct dw_spi *dws)
 {
+    struct spi_message *msg = dws->cur_msg;
+    struct list_head *tlist = msg->transfers.next;
+    int total_len = 0;
+    int i;
+    unsigned int tx_room, rx_room;
+    unsigned short value;
+
+    while(tlist != &(msg->transfers)) {
+        struct spi_transfer *transfer = list_entry(tlist,
+						                    struct spi_transfer,
+						                    transfer_list);
+
+        if(total_len + transfer->len > dws->fifo_len) {
+            printk("poll_transfer overflow.\r\n");
+            dws->cur_msg->actual_length = 0;
+            dws->cur_msg->status = -EIO;
+            goto way_out;
+        }
+
+        if(transfer->tx_buf) {
+            memcpy(spi_tx_buffer + total_len, transfer->tx_buf, transfer->len);
+        }
+        else {
+            memset(spi_tx_buffer + total_len, 0, transfer->len);
+        }
+
+        total_len += transfer->len;
+
+        tlist = tlist->next;
+    }
+
+#if 0
+    printk("poll_transfer total_len %d %d\n", total_len, dws->n_bytes);
+    for(i = 0; i < total_len; i++){
+        printk("Tx %04x\n", spi_tx_buffer[i]);
+    }
+#endif
+    if ((dws->n_bytes == 2) && (total_len % 2)) {
+        total_len ++;
+    }
+
+    tx_room = dw_readw(dws, DW_SPI_TXFLR);
+
+    //printk("poll_transfer tx_room %d\n", tx_room);
+    while(tx_room != 0) {
+        tx_room = dw_readw(dws, DW_SPI_TXFLR);
+    }
+
+    for(i = 0; i < total_len; i += dws->n_bytes) {
+        if(dws->n_bytes == 1) {
+            dw_writew(dws, DW_SPI_DR, spi_tx_buffer[i]);
+        }
+        else {
+            dw_writew(dws, DW_SPI_DR, *(((u16 *)(spi_tx_buffer + i))));
+        }
+    }
+
+    //printk("Tx done.");
+
+    value = dw_readw(dws, DW_SPI_SR);
+    while(value & 0x01) {
+        value = dw_readw(dws, DW_SPI_SR);
+    }
+
+    rx_room = dw_readw(dws, DW_SPI_RXFLR);
+    //printk("poll_transfer rx_room %d\n", rx_room);
+    while(rx_room != total_len / dws->n_bytes) {
+        rx_room = dw_readw(dws, DW_SPI_RXFLR);
+    }
+
+    for(i = 0; i < total_len; i += dws->n_bytes) {
+        if(dws->n_bytes == 1) {
+            spi_rx_buffer[i] = dw_readw(dws, DW_SPI_DR);
+        }
+        else {
+            *(((u16 *)(spi_rx_buffer + i))) = dw_readw(dws, DW_SPI_DR);
+        }
+    }
+    //printk("Rx done.");
+#if 0
+    for(i = 0; i < total_len; i++){
+        printk("Rx %04x\n", spi_rx_buffer[i]);
+    }
+#endif
+    tlist = msg->transfers.next;
+    i = 0;
+    while(tlist != &(msg->transfers)) {
+        struct spi_transfer *transfer = list_entry(tlist,
+						                    struct spi_transfer,
+						                    transfer_list);
+
+        if(transfer->rx_buf) {
+            memcpy(transfer->rx_buf, spi_rx_buffer + i, transfer->len);
+        }
+
+        i += transfer->len;
+
+        tlist = tlist->next;
+    }
+
+    dws->cur_msg->actual_length = total_len;
+    dws->cur_msg->status = 0;
+way_out:
+    dws->cur_msg->state = DONE_STATE;
+    giveback(dws);
+    return;
+}
+#endif
+
+#if 0
+/* Must be called inside pump_transfers() */
+static void poll_transfer(struct dw_spi *dws)
+{
+    test_transfer(dws);
+    while(1) {};
 	do {
 		dw_writer(dws);
 		dw_reader(dws);
@@ -388,6 +541,7 @@ static void poll_transfer(struct dw_spi *dws)
 
 	dw_spi_xfer_done(dws);
 }
+#endif
 
 static void pump_transfers(unsigned long data)
 {
@@ -434,6 +588,8 @@ static void pump_transfers(unsigned long data)
 			udelay(previous->delay_usecs);
 	}
 
+    //printk("chip 0x%08x %d\r\n", (unsigned int)chip, chip->n_bytes);
+
 	dws->n_bytes = chip->n_bytes;
 	dws->dma_width = chip->dma_width;
 	dws->cs_control = chip->cs_control;
@@ -451,6 +607,7 @@ static void pump_transfers(unsigned long data)
 
 	cr0 = chip->cr0;
 
+    //printk("speed_hz %d.\r\n", transfer->speed_hz);
 	/* Handle per transfer options for bpw and speed */
 	if (transfer->speed_hz) {
 		speed = chip->speed_hz;
@@ -512,7 +669,6 @@ static void pump_transfers(unsigned long data)
 
 	/* Check if current transfer is a DMA transaction */
 	dws->dma_mapped = map_dma_buffers(dws);
-    printk("dma_mapped %d.\r\n", dws->dma_mapped);
 
 	/*
 	 * Interrupt mode
@@ -538,8 +694,13 @@ static void pump_transfers(unsigned long data)
 
 		if (dw_readw(dws, DW_SPI_CTRL0) != cr0)
 			dw_writew(dws, DW_SPI_CTRL0, cr0);
+        dw_writew(dws, DW_SPI_CTRL1, 0x0001);
 
+        //printk("DW SPI CTRL0: 0x%04x\r\n", dw_readw(dws, DW_SPI_CTRL0));
+
+        //printk("DW SPI CLOCK: 0x%04x 0x%04x\r\n", clk_div, chip->clk_div);
 		spi_set_clk(dws, clk_div ? clk_div : chip->clk_div);
+        //printk("DW Select: %d\r\n", spi->chip_select);
 		spi_chip_sel(dws, spi->chip_select);
 
 		/* Set the interrupt mask, for poll mode just disable all int */
@@ -549,6 +710,7 @@ static void pump_transfers(unsigned long data)
 		if (txint_level)
 			dw_writew(dws, DW_SPI_TXFLTR, txint_level);
 
+        dw_writew(dws, DW_SPI_RXFLTR, 0x0002);
 		spi_enable_chip(dws, 1);
 		if (cs_change)
 			dws->prev_chip = chip;
@@ -611,7 +773,7 @@ static int dw_spi_transfer(struct spi_device *spi, struct spi_message *msg)
 	struct dw_spi *dws = spi_master_get_devdata(spi->master);
 	unsigned long flags;
 
-    printk("dw_spi_transfer.\r\n");
+    //printk("dw_spi_transfer.\r\n");
 
 	spin_lock_irqsave(&dws->lock, flags);
 
@@ -649,6 +811,7 @@ static int dw_spi_setup(struct spi_device *spi)
 	struct dw_spi_chip *chip_info = NULL;
 	struct chip_data *chip;
 
+    //printk("dw_spi_setup.\r\n");
 	if (spi->bits_per_word != 8 && spi->bits_per_word != 16)
 		return -EINVAL;
 
@@ -680,8 +843,6 @@ static int dw_spi_setup(struct spi_device *spi)
 		chip->enable_dma = chip_info->enable_dma;
 	}
 
-    printk("Poll mode: %d.\r\n", chip->poll_mode);
-
 	if (spi->bits_per_word <= 8) {
 		chip->n_bytes = 1;
 		chip->dma_width = 1;
@@ -708,6 +869,7 @@ static int dw_spi_setup(struct spi_device *spi)
 			| (spi->mode  << SPI_MODE_OFFSET)
 			| (chip->tmode << SPI_TMOD_OFFSET);
 
+    //printk("CR0 0x%08x\r\n", chip->cr0);
 	spi_set_ctldata(spi, chip);
 	return 0;
 }
@@ -718,7 +880,7 @@ static void dw_spi_cleanup(struct spi_device *spi)
 	kfree(chip);
 }
 
-static int __devinit init_queue(struct dw_spi *dws)
+static int init_queue(struct dw_spi *dws)
 {
 	INIT_LIST_HEAD(&dws->queue);
 	spin_lock_init(&dws->lock);
@@ -813,11 +975,13 @@ static void spi_hw_init(struct dw_spi *dws)
 		}
 
 		dws->fifo_len = (fifo == 257) ? 0 : fifo;
+
+        //printk("Fifo %d %d\r\n", fifo, dws->fifo_len);
 		dw_writew(dws, DW_SPI_TXFLTR, 0);
 	}
 }
 
-int __devinit dw_spi_add_host(struct dw_spi *dws)
+int dw_spi_add_host(struct dw_spi *dws)
 {
 	struct spi_master *master;
 	int ret;
@@ -854,6 +1018,14 @@ int __devinit dw_spi_add_host(struct dw_spi *dws)
 
 	/* Basic HW init */
 	spi_hw_init(dws);
+
+    spi_tx_buffer = kmalloc(dws->fifo_len, GFP_KERNEL);
+    spi_rx_buffer = kmalloc(dws->fifo_len, GFP_KERNEL);
+
+    if((spi_tx_buffer == NULL) || (spi_rx_buffer == NULL)) {
+        dev_err(&master->dev, "can not get memory\n");
+		goto err_free_master;
+    }
 
 	if (dws->dma_ops && dws->dma_ops->dma_init) {
 		ret = dws->dma_ops->dma_init(dws);
@@ -894,12 +1066,18 @@ err_diable_hw:
 	free_irq(dws->irq, dws);
 err_free_master:
 	spi_master_put(master);
+    if(spi_tx_buffer) {
+        kfree(spi_tx_buffer);
+    }
+    if(spi_rx_buffer) {
+        kfree(spi_rx_buffer);
+    }
 exit:
 	return ret;
 }
 EXPORT_SYMBOL_GPL(dw_spi_add_host);
 
-void __devexit dw_spi_remove_host(struct dw_spi *dws)
+void dw_spi_remove_host(struct dw_spi *dws)
 {
 	int status = 0;
 

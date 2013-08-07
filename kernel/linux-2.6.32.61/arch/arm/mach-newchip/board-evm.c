@@ -38,6 +38,8 @@
 #include <linux/phy.h>
 #include <linux/stmmac_plat.h>
 
+#include <linux/spi/spi-dw.h>
+
 /* other misc. init functions */
 void __init newchip_irq_init(void);
 void __init newchip_map_common_io(void);
@@ -182,6 +184,15 @@ static struct flash_platform_data newchip_legacy_M25P28_info = {
 	.type = "m25p128"
 };
 
+
+static struct dw_spi_chip dw_spi_chip_info = {
+	.poll_mode	= 1,
+	.type	    = 0,
+	.enable_dma	= 0,
+    .cs_control = NULL
+};
+
+
 static struct spi_board_info newchip_spi_board_info[] = {
 	[0] = {
 		.modalias = "m25p128",
@@ -196,9 +207,9 @@ static struct spi_board_info newchip_spi_board_info[] = {
 		.modalias = "m25p80_legacy",
 		.bus_num = 1,					// spi channel 0
 		.chip_select = 0,
-
+        .controller_data = &dw_spi_chip_info,
 		.platform_data = &newchip_legacy_M25P28_info,
-		.max_speed_hz = 20*1000*1000,	// default 2Mhz
+		.max_speed_hz = 5*1000*1000,	// default 2Mhz
 		.mode = 0						// default 0, you can choose [SPI_CPOL|SPI_CPHA|SPI_CS_HIGH|SPI_LSB_FIRST]
 	},
 };

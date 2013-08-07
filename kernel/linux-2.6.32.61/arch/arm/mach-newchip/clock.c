@@ -33,7 +33,7 @@ static struct clk wdtclock = {
 
 static struct clk spiclock = {
 	.name		= "dw_spi",
-	.rate	= 5000000
+	.rate	= 50000000
 };
 
 /* clocks cannot be de-registered no refcounting necessary */

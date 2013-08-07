@@ -60,6 +60,7 @@ mknod mtdblock0 b 31 0
 mknod mtdblock1 b 31 1
 mknod mtdblock2 b 31 2
 mknod mtdblock3 b 31 3
+mknod mtdblock4 b 31 4
 mknod mtd0 c 90 0
 mknod mtd0ro c 90 1
 mknod mtd1 c 90 2
@@ -68,6 +69,8 @@ mknod mtd2 c 90 4
 mknod mtd2ro c 90 5
 mknod mtd3 c 90 6
 mknod mtd3ro c 90 7
+mknod mtd4 c 90 8
+mknod mtd4ro c 90 9
 
 mknod i2c-0 c 89 0
 mknod watchdog c 10 130
