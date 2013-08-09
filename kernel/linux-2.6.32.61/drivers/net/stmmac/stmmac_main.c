@@ -137,7 +137,7 @@ MODULE_PARM_DESC(buf_sz, "DMA buffer size");
 /* In case of Giga ETH, we can enable/disable the COE for the
  * transmit HW checksum computation.
  * Note that, if tx csum is off in HW, SG will be still supported. */
-static int tx_coe = HW_CSUM;
+static int tx_coe = NO_HW_CSUM; //HW_CSUM;
 module_param(tx_coe, int, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(tx_coe, "GMAC COE type 2 [on/off]");
 
