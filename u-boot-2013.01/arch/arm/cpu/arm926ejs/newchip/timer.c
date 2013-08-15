@@ -80,13 +80,15 @@ void __udelay(unsigned long us)
 			return;
 		}
 	}	
-#endif	
+//#endif	
 	us = us*100;
 	while(us > 0)
 	{
 		us--;
 		*pcount++;
 	}
+#endif
+
 }
 
 ulong get_tbclk(void)
