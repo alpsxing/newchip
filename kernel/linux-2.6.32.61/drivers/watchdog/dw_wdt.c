@@ -163,6 +163,12 @@ static void dw_wdt_keepalive(void)
 	       WDOG_COUNTER_RESTART_REG_OFFSET);
 }
 
+void dw_wdt_reset()
+{
+    writel(0, dw_wdt.regs + WDOG_TIMEOUT_RANGE_REG_OFFSET);
+    dw_wdt_enable();
+}
+
 static void dw_wdt_ping(unsigned long data)
 {
 /*

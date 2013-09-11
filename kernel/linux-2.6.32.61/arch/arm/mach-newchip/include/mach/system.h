@@ -14,7 +14,7 @@
 #include <asm/io.h>
 //#include <asm/hardware.h>
 
-extern void davinci_watchdog_reset(void);
+extern void dw_wdt_reset(void);
 
 static void arch_idle(void)
 {
@@ -23,7 +23,7 @@ static void arch_idle(void)
 
 static void arch_reset(char mode, const char *cmd)
 {
-//	davinci_watchdog_reset();
+    dw_wdt_reset();
 }
 
 #endif /* __ASM_ARCH_SYSTEM_H */
